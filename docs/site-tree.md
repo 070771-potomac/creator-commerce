@@ -9,7 +9,7 @@ Map of the pages in the course's final product, grouped by **layout** so shared 
 | [Marketing](#1-marketing-layout) | Public header (logo, login/signup CTA), footer | 1 |
 | [Storefront](#2-storefront-layout) | Creator-branded header (name/avatar), minimal chrome, buyer-facing | 2 |
 | [Centered card](#3-centered-card-layout) | Single centered card, no nav | 4 |
-| [Dashboard](#4-dashboard-layout) | Sidebar nav, topbar, content area; auth-protected | 10 |
+| [Dashboard](#4-dashboard-layout) | Sidebar nav, topbar, content area; auth-protected | 11 |
 
 ## `app/` structure
 
@@ -44,6 +44,7 @@ app/
     ├── purchases/page.tsx         # /purchases
     ├── downloads/page.tsx         # /downloads
     ├── wishlist/page.tsx          # /wishlist
+    ├── following/page.tsx         # /following
     ├── settings/page.tsx          # /settings
     └── help/first-sale/page.tsx   # /help/first-sale
 ```
@@ -64,8 +65,8 @@ Creator-branded public shell: creator name/avatar header, minimal chrome. Buyer-
 
 | Route | Page | Archetype | Key features | Sessions |
 |---|---|---|---|---|
-| `/@handle` | Creator storefront | Grid | Grid of the creator's **Published** products, SEO metadata, 404 for unknown handles | S13 |
-| `/@handle/{slug}` | Public product page | Detail | Cover image, AI-generated description, `<ProductTeaser>` per file type, **Buy** button (Stripe Checkout), save to wishlist, SEO metadata; Published products only | S9, S13, S14 |
+| `/@handle` | Creator storefront | Grid | Grid of the creator's **Published** products, SEO metadata, 404 for unknown handles; **Follow** button (ext) | S13, ext |
+| `/@handle/{slug}` | Public product page | Detail | Cover image, AI-generated description, `<ProductTeaser>` per file type, **Buy** button (Stripe Checkout), save to wishlist, SEO metadata; Published products only; reviews list + average rating (ext) | S9, S13, S14, ext |
 
 ## 3. Centered-card layout
 
@@ -91,6 +92,7 @@ Sales
 Purchases
 Downloads
 Wishlist
+Following
 ─────────────
 Settings
 Help
@@ -102,13 +104,14 @@ Five page archetypes — design one template per archetype, reuse across pages. 
 |---|---|---|---|---|
 | `/dashboard` | Overview | Stats/overview | KPIs: revenue, units sold, top 5 products; onboarding checklist | S1, S10, S12, S18 |
 | `/products` | Product list | Data table | Filtering, search, pagination, Draft/Published status, duplicate | S1, S12 |
-| `/sales` | Sales | Data table | Sales table + analytics | S1, S12 |
-| `/purchases` | Order history | Data table | Buyer's orders: product, creator, date, amount, receipt link, download shortcut. History/receipts view — file access lives in `/downloads`. | ext |
+| `/sales` | Sales | Data table | Sales table + analytics; refund requests from buyers, approve/reject (ext) | S1, S12, ext |
+| `/purchases` | Order history | Data table | Buyer's orders: product, creator, date, amount, receipt link, download shortcut. History/receipts view — file access lives in `/downloads`. **Request refund** with status (requested/approved/rejected); **Leave a review** (1–5 stars + text) for purchased products. | ext |
 | `/downloads` | Downloads library | Data table | Current user's purchased files + protected download links; post-payment redirect target. Library view — order details live in `/purchases`. | S11 |
 | `/products/new` | Create product | Form | RHF + zod + next-safe-action form, price/currency validation | S7 |
 | `/products/{id}` | Edit product | Form | Digital asset + cover upload (UploadThing), status, SEO fields, AI page generation; own `loading.tsx` / `error.tsx` / `not-found.tsx` | S3, S7, S8, S14 |
-| `/settings` | Settings | Form | Profile, handle, account; delivery email (digital "shipping" address for receipts/delivery); email notification preferences | S2, ext |
+| `/settings` | Settings | Form | Profile, handle, account; delivery email (digital "shipping" address for receipts/delivery); email notification preferences; **Billing** section (name/company, country, VAT ID — used on receipts and passed to Stripe); **Privacy** section (data export as JSON, account deletion — GDPR) | S2, ext |
 | `/wishlist` | Wishlist | Grid | Products saved from storefronts; card grid linking to public product page / Buy | ext |
+| `/following` | Followed creators | Grid | Creators the user follows; cards link to `/@handle`; optional email when a followed creator publishes | ext |
 | `/help/first-sale` | "How to sell your first product" | Content/guide | Onboarding guide | S18 |
 
 ## Special files (not pages, listed for completeness)
