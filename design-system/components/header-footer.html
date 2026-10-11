@@ -1,0 +1,50 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Components — Header & Footer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <script src="../theme.js"></script>
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle" type="button">☾ Dark</button>
+
+  <header class="site-header">
+    <div class="container inner">
+      <a class="brand" href="#"><span class="dot"></span> Creator Commerce</a>
+      <nav class="nav-links">
+        <a href="#">Features</a>
+        <a href="#">Explore</a>
+        <a href="#">Pricing</a>
+      </nav>
+      <div class="row gap-2">
+        <a class="btn btn-ghost btn-sm" href="#">Log in</a>
+        <a class="btn btn-primary btn-sm" href="#">Sign up</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="padding-block:3rem;">
+    <p class="muted">Header sticky (marketing) sus și footer jos — shell-ul public reutilizat de landing și storefront. Comută tema pentru a vedea blur-ul și contrastul.</p>
+    <div style="height:40vh;"></div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container inner">
+      <div class="stack gap-2">
+        <a class="brand" href="#" style="font-size:.95rem;"><span class="dot"></span> Creator Commerce</a>
+        <span>Sell digital products. Get paid. Deliver instantly.</span>
+      </div>
+      <div class="row gap-6 wrap">
+        <div class="stack gap-2"><strong>Product</strong><a href="#">Features</a><a href="#">Pricing</a></div>
+        <div class="stack gap-2"><strong>Company</strong><a href="#">About</a><a href="#">Contact</a></div>
+        <div class="stack gap-2"><strong>Legal</strong><a href="#">Terms</a><a href="#">Privacy</a></div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

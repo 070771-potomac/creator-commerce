@@ -1,0 +1,49 @@
+<!-- @dsCard group="Dashboard" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Products</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <script src="../theme.js"></script>
+  <script src="dashboard-shell.js"></script>
+</head>
+<body data-active="products">
+  <button id="theme-toggle" class="theme-toggle" type="button">☾ Dark</button>
+  <div id="page-content" style="display:none">
+    <div class="page-head">
+      <div><h1 class="page-title">Products</h1><p class="muted" style="margin:.25rem 0 0;">Manage what you sell.</p></div>
+      <a class="btn btn-primary" href="product-new.html">New product</a>
+    </div>
+
+    <div class="row gap-3 wrap">
+      <input class="input" placeholder="Search products…" style="max-width:280px;" />
+      <button class="btn btn-outline btn-sm">All</button>
+      <button class="btn btn-ghost btn-sm">Published</button>
+      <button class="btn btn-ghost btn-sm">Draft</button>
+    </div>
+
+    <div class="card">
+      <div class="card-content" style="padding:.5rem 1rem;">
+        <table class="table">
+          <thead><tr><th>Product</th><th>Status</th><th>Price</th><th>Sales</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>Notion Dashboard Kit</td><td><span class="badge badge-default">Published</span></td><td class="tabular">$24.00</td><td>420</td><td style="text-align:right;"><a class="btn btn-ghost btn-sm" href="product-edit.html">Edit</a></td></tr>
+            <tr><td>Icon Set — 300 SVG</td><td><span class="badge badge-default">Published</span></td><td class="tabular">$9.00</td><td>388</td><td style="text-align:right;"><a class="btn btn-ghost btn-sm" href="product-edit.html">Edit</a></td></tr>
+            <tr><td>Portfolio Template v2</td><td><span class="badge badge-secondary">Draft</span></td><td class="tabular">$29.00</td><td>0</td><td style="text-align:right;"><a class="btn btn-ghost btn-sm" href="product-edit.html">Edit</a></td></tr>
+            <tr><td>Wallpaper Bundle</td><td><span class="badge badge-default">Published</span></td><td class="tabular">$6.00</td><td>150</td><td style="text-align:right;"><a class="btn btn-ghost btn-sm" href="product-edit.html">Edit</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="row between">
+      <span class="muted" style="font-size:.8125rem;">Showing 1–4 of 6</span>
+      <div class="row gap-2"><button class="btn btn-outline btn-sm">Previous</button><button class="btn btn-outline btn-sm">Next</button></div>
+    </div>
+  </div>
+</body>
+</html>

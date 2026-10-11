@@ -1,0 +1,91 @@
+<!-- @dsCard group="Overview" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Creator Commerce — Design System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="theme.js"></script>
+  <style>
+    .hero-map { padding: 3rem 0 2rem; }
+    .kicker { font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--primary); }
+    .group-title { font-family: var(--font-heading); font-size: 0.8125rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted-foreground); margin: 2rem 0 0.75rem; }
+    .node-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.75rem; }
+    .node {
+      display: flex; flex-direction: column; gap: 0.35rem; text-decoration: none;
+      padding: 0.875rem 1rem; border: 1px solid var(--border); border-radius: var(--radius-lg);
+      background: var(--card); transition: border-color 120ms ease, transform 120ms ease;
+    }
+    .node:hover { border-color: var(--primary); transform: translateY(-1px); }
+    .node .n-name { font-weight: 700; font-size: 0.9rem; }
+    .node .n-route { font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted-foreground); }
+    .node.todo { opacity: 0.55; }
+    .node.todo:hover { transform: none; border-color: var(--border); cursor: default; }
+  </style>
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle" type="button">☾ Dark</button>
+
+  <div class="container hero-map">
+    <p class="kicker">Design System</p>
+    <h1 class="font-heading" style="font-size:2.25rem;margin:.35rem 0 .5rem;">Creator Commerce</h1>
+    <p class="muted" style="max-width:44ch;">
+      Tree map al site-ului, grupat pe cele 4 layout-uri din
+      <code>docs/site-tree.md</code>. Fiecare nod e un preview live — deschide-l și
+      validează-l în light + dark. Toate folosesc aceleași tokens ca aplicația reală.
+    </p>
+  </div>
+
+  <div class="container" style="padding-bottom:4rem;">
+    <p class="group-title">Foundations</p>
+    <div class="node-grid">
+      <a class="node" href="foundations/colors.html"><span class="n-name">Colors</span><span class="n-route">paletă light + dark</span></a>
+      <a class="node" href="foundations/typography.html"><span class="n-name">Typography</span><span class="n-route">Roboto / Nunito Sans</span></a>
+      <a class="node" href="foundations/radius-spacing.html"><span class="n-name">Radius & spacing</span><span class="n-route">scală de bază</span></a>
+    </div>
+
+    <p class="group-title">Components</p>
+    <div class="node-grid">
+      <a class="node" href="components/buttons.html"><span class="n-name">Buttons / Badge / Card / Input</span><span class="n-route">primitives</span></a>
+      <a class="node" href="components/product-card.html"><span class="n-name">ProductCard</span><span class="n-route">grid item</span></a>
+      <a class="node" href="components/header-footer.html"><span class="n-name">Header + Footer</span><span class="n-route">public shell</span></a>
+    </div>
+
+    <p class="group-title">Marketing layout</p>
+    <div class="node-grid">
+      <a class="node" href="marketing/landing.html"><span class="n-name">Landing / home</span><span class="n-route">/</span></a>
+    </div>
+
+    <p class="group-title">Storefront layout</p>
+    <div class="node-grid">
+      <a class="node" href="storefront/creator.html"><span class="n-name">Creator storefront</span><span class="n-route">/@handle</span></a>
+      <a class="node" href="storefront/product.html"><span class="n-name">Public product page</span><span class="n-route">/@handle/{slug}</span></a>
+    </div>
+
+    <p class="group-title">Centered-card layout</p>
+    <div class="node-grid">
+      <a class="node" href="centered-card/login.html"><span class="n-name">Login</span><span class="n-route">/login</span></a>
+      <a class="node" href="centered-card/signup.html"><span class="n-name">Signup</span><span class="n-route">/signup</span></a>
+      <a class="node" href="centered-card/checkout-success.html"><span class="n-name">Checkout success</span><span class="n-route">/checkout/success</span></a>
+      <a class="node" href="centered-card/checkout-cancel.html"><span class="n-name">Checkout cancel</span><span class="n-route">/checkout/cancel</span></a>
+    </div>
+
+    <p class="group-title">Dashboard layout</p>
+    <div class="node-grid">
+      <a class="node" href="dashboard/overview.html"><span class="n-name">Overview</span><span class="n-route">/dashboard</span></a>
+      <a class="node" href="dashboard/products.html"><span class="n-name">Products list</span><span class="n-route">/products</span></a>
+      <a class="node" href="dashboard/sales.html"><span class="n-name">Sales</span><span class="n-route">/sales</span></a>
+      <a class="node" href="dashboard/purchases.html"><span class="n-name">Purchases</span><span class="n-route">/purchases</span></a>
+      <a class="node" href="dashboard/downloads.html"><span class="n-name">Downloads</span><span class="n-route">/downloads</span></a>
+      <a class="node" href="dashboard/wishlist.html"><span class="n-name">Wishlist</span><span class="n-route">/wishlist</span></a>
+      <a class="node" href="dashboard/product-new.html"><span class="n-name">Create product</span><span class="n-route">/products/new</span></a>
+      <a class="node" href="dashboard/product-edit.html"><span class="n-name">Edit product</span><span class="n-route">/products/{id}</span></a>
+      <a class="node" href="dashboard/settings.html"><span class="n-name">Settings</span><span class="n-route">/settings</span></a>
+      <a class="node" href="dashboard/help-first-sale.html"><span class="n-name">Help — first sale</span><span class="n-route">/help/first-sale</span></a>
+    </div>
+  </div>
+</body>
+</html>

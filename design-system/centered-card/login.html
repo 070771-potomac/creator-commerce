@@ -1,0 +1,45 @@
+<!-- @dsCard group="Centered-card" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Centered-card — Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <script src="../theme.js"></script>
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle" type="button">☾ Dark</button>
+  <div class="center-screen">
+    <div class="card auth-card">
+      <div class="card-header" style="text-align:center;align-items:center;">
+        <div class="card-title font-heading" style="font-size:1.25rem;">Welcome back</div>
+        <div class="card-desc">Sign in to your account to continue.</div>
+      </div>
+      <div class="card-content">
+        <form class="stack gap-4">
+          <div class="field">
+            <label class="label" for="email">Email</label>
+            <input class="input" id="email" type="email" placeholder="you@example.com" />
+          </div>
+          <div class="field">
+            <div class="row between">
+              <label class="label" for="password">Password</label>
+              <a href="#" class="muted" style="font-size:.75rem;">Forgot password?</a>
+            </div>
+            <input class="input" id="password" type="password" placeholder="••••••••" />
+          </div>
+          <button class="btn btn-primary btn-block" type="button">Sign in</button>
+        </form>
+      </div>
+      <div class="card-footer" style="text-align:center;">
+        <span class="muted" style="font-size:.875rem;">Don't have an account?
+          <a href="signup.html" style="color:var(--foreground);font-weight:600;">Sign up</a>
+        </span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

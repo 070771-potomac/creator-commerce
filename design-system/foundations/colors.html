@@ -1,0 +1,54 @@
+<!-- @dsCard group="Foundations" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Foundations — Colors</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <script src="../theme.js"></script>
+  <style>
+    .swatch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+    .swatch { border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+    .swatch .chip { height: 84px; }
+    .swatch .meta { padding: 0.625rem 0.75rem; }
+    .swatch .name { font-weight: 700; font-size: 0.85rem; }
+    .swatch .var { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted-foreground); }
+  </style>
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle" type="button">☾ Dark</button>
+  <div class="container" style="padding-block:2.5rem;">
+    <a href="../index.html" class="muted" style="font-size:.8125rem;text-decoration:none;">← Design System</a>
+    <h1 class="font-heading" style="font-size:1.75rem;margin:.5rem 0 .25rem;">Colors</h1>
+    <p class="muted" style="margin-top:0;">Paleta semantică (OKLCH), identică în light și dark. Comută tema din colț.</p>
+
+    <div class="swatch-grid" style="margin-top:1.5rem;">
+      <div class="swatch"><div class="chip" style="background:var(--primary)"></div><div class="meta"><div class="name">Primary</div><div class="var">--primary</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--primary-foreground)"></div><div class="meta"><div class="name">Primary fg</div><div class="var">--primary-foreground</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--background)"></div><div class="meta"><div class="name">Background</div><div class="var">--background</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--foreground)"></div><div class="meta"><div class="name">Foreground</div><div class="var">--foreground</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--card)"></div><div class="meta"><div class="name">Card</div><div class="var">--card</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--secondary)"></div><div class="meta"><div class="name">Secondary</div><div class="var">--secondary</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--muted)"></div><div class="meta"><div class="name">Muted</div><div class="var">--muted</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--muted-foreground)"></div><div class="meta"><div class="name">Muted fg</div><div class="var">--muted-foreground</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--accent)"></div><div class="meta"><div class="name">Accent</div><div class="var">--accent</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--border)"></div><div class="meta"><div class="name">Border</div><div class="var">--border</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--destructive)"></div><div class="meta"><div class="name">Destructive</div><div class="var">--destructive</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--sidebar-primary)"></div><div class="meta"><div class="name">Sidebar primary</div><div class="var">--sidebar-primary</div></div></div>
+    </div>
+
+    <h2 class="font-heading" style="font-size:1.1rem;margin:2rem 0 .75rem;">În context</h2>
+    <div class="row gap-3 wrap">
+      <button class="btn btn-primary">Primary action</button>
+      <button class="btn btn-outline">Outline</button>
+      <button class="btn btn-ghost">Ghost</button>
+      <span class="badge badge-default">Published</span>
+      <span class="badge badge-secondary">Draft</span>
+      <span class="badge badge-destructive">Refunded</span>
+    </div>
+  </div>
+</body>
+</html>

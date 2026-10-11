@@ -1,0 +1,42 @@
+<!-- @dsCard group="Dashboard" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Settings</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <script src="../theme.js"></script>
+  <script src="dashboard-shell.js"></script>
+</head>
+<body data-active="settings">
+  <button id="theme-toggle" class="theme-toggle" type="button">☾ Dark</button>
+  <div id="page-content" style="display:none">
+    <div class="page-head"><div><h1 class="page-title">Settings</h1><p class="muted" style="margin:.25rem 0 0;">Your profile, handle and delivery preferences.</p></div></div>
+
+    <div class="card" style="max-width:640px;"><div class="card-header"><div class="card-title">Profile</div></div>
+      <div class="card-content stack gap-4">
+        <div class="field"><label class="label">Display name</label><input class="input" value="Alexandru Popovici" /></div>
+        <div class="field"><label class="label">Public handle</label>
+          <div class="row" style="border:1px solid var(--input);border-radius:var(--radius-md);overflow:hidden;">
+            <span class="muted" style="padding:0 .25rem 0 .75rem;font-family:var(--font-mono);">/@</span>
+            <input class="input" value="alexpopovici" style="border:0;padding-left:.15rem;" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="max-width:640px;"><div class="card-header"><div class="card-title">Delivery</div><div class="card-desc">Where receipts and download links are sent.</div></div>
+      <div class="card-content stack gap-4">
+        <div class="field"><label class="label">Delivery email</label><input class="input" value="alexandru.popovici0707@gmail.com" type="email" /></div>
+        <label class="row gap-2" style="font-size:.9rem;"><input type="checkbox" checked /> Email me when I make a sale</label>
+        <label class="row gap-2" style="font-size:.9rem;"><input type="checkbox" /> Weekly summary of my store</label>
+      </div>
+    </div>
+
+    <div class="row gap-3" style="max-width:640px;"><button class="btn btn-primary">Save changes</button><button class="btn btn-ghost">Discard</button></div>
+  </div>
+</body>
+</html>

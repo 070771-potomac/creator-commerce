@@ -1,0 +1,115 @@
+<!-- @dsCard group="Marketing" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marketing — Landing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <script src="../theme.js"></script>
+  <style>
+    .hero-grid { display:grid; grid-template-columns: 1.1fr .9fr; gap:3rem; align-items:center; }
+    .hero-visual { border:1px solid var(--border); border-radius: var(--radius-xl); background:var(--card); padding:1rem; box-shadow: 0 20px 60px -30px rgba(0,0,0,.35); }
+    .steps { display:grid; grid-template-columns: repeat(3,1fr); gap:1rem; }
+    .step-num { width:2rem; height:2rem; border-radius:999px; background:color-mix(in oklch, var(--primary) 15%, transparent); color:var(--primary); font-weight:800; display:flex; align-items:center; justify-content:center; }
+    .feat-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:1rem; }
+    .cta-band { background:var(--primary); color:var(--primary-foreground); border-radius: var(--radius-xl); padding:2.5rem; text-align:center; }
+    .section { padding-block: 3.5rem; }
+    .section h2 { font-size: 1.75rem; margin:0 0 .5rem; }
+    @media (max-width: 820px){ .hero-grid,.steps,.feat-grid{ grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle" type="button">☾ Dark</button>
+
+  <header class="site-header">
+    <div class="container inner">
+      <a class="brand" href="#"><span class="dot"></span> Creator Commerce</a>
+      <nav class="nav-links">
+        <a href="#how">How it works</a>
+        <a href="#features">Features</a>
+        <a href="#explore">Explore</a>
+      </nav>
+      <div class="row gap-2">
+        <a class="btn btn-ghost btn-sm" href="../centered-card/login.html">Log in</a>
+        <a class="btn btn-primary btn-sm" href="../centered-card/signup.html">Sign up</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="eyebrow">For digital creators</span>
+        <h1 class="font-heading">Sell what you create. Get paid instantly.</h1>
+        <p class="lead">Launch a storefront, publish digital products, take payments with Stripe, and deliver protected downloads — all from one account.</p>
+        <div class="row gap-3 wrap" style="margin-top:1.5rem;">
+          <a class="btn btn-primary btn-lg" href="../centered-card/signup.html">Start selling — free</a>
+          <a class="btn btn-outline btn-lg" href="../storefront/creator.html">See a storefront</a>
+        </div>
+        <p class="muted" style="font-size:.8125rem;margin-top:1rem;">No monthly fee to start · Stripe-powered payouts</p>
+      </div>
+      <div class="hero-visual">
+        <div class="grid" style="grid-template-columns:1fr 1fr;">
+          <article class="product-card"><div class="cover">cover</div><div class="body"><div class="p-title">UI Kit Pro</div><div class="p-meta"><span class="price">$24</span><span class="badge badge-secondary">ZIP</span></div></div></article>
+          <article class="product-card"><div class="cover">cover</div><div class="body"><div class="p-title">Photo Pack</div><div class="p-meta"><span class="price">$12</span><span class="badge badge-secondary">ZIP</span></div></div></article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="section" id="how" style="background:var(--muted);">
+    <div class="container">
+      <h2 class="font-heading">How it works</h2>
+      <p class="muted" style="margin-top:0;">Three steps from file to first sale.</p>
+      <div class="steps" style="margin-top:1.5rem;">
+        <div class="card card-pad stack gap-3"><div class="step-num">1</div><strong>Publish</strong><span class="muted" style="font-size:.9rem;">Upload your file, set a price, add a cover. AI drafts the product page for you.</span></div>
+        <div class="card card-pad stack gap-3"><div class="step-num">2</div><strong>Sell</strong><span class="muted" style="font-size:.9rem;">Share your <code>/@handle</code> storefront. Buyers pay securely via Stripe Checkout.</span></div>
+        <div class="card card-pad stack gap-3"><div class="step-num">3</div><strong>Deliver</strong><span class="muted" style="font-size:.9rem;">Buyers get instant, protected downloads. You track revenue in your dashboard.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section" id="features">
+    <div class="container">
+      <h2 class="font-heading">Everything you need to sell digital</h2>
+      <div class="feat-grid" style="margin-top:1.5rem;">
+        <div class="card card-pad stack gap-2"><strong>Stripe Checkout</strong><span class="muted" style="font-size:.9rem;">Secure payments with buyer/seller/product metadata baked in.</span></div>
+        <div class="card card-pad stack gap-2"><strong>Protected downloads</strong><span class="muted" style="font-size:.9rem;">Files are only accessible to verified buyers.</span></div>
+        <div class="card card-pad stack gap-2"><strong>AI product pages</strong><span class="muted" style="font-size:.9rem;">Descriptions and per-file teasers generated from your upload.</span></div>
+        <div class="card card-pad stack gap-2"><strong>One account, buy & sell</strong><span class="muted" style="font-size:.9rem;">Every user gets a storefront and a buyer library.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section" id="explore">
+    <div class="container">
+      <div class="cta-band">
+        <h2 class="font-heading" style="margin-top:0;">Ready to open your storefront?</h2>
+        <p style="opacity:.9;max-width:44ch;margin-inline:auto;">Create an account and publish your first product in minutes.</p>
+        <a class="btn btn-lg" style="background:var(--background);color:var(--foreground);margin-top:1rem;" href="../centered-card/signup.html">Get started</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container inner">
+      <div class="stack gap-2">
+        <a class="brand" href="#" style="font-size:.95rem;"><span class="dot"></span> Creator Commerce</a>
+        <span>Sell digital products. Get paid. Deliver instantly.</span>
+      </div>
+      <div class="row gap-6 wrap">
+        <div class="stack gap-2"><strong>Product</strong><a href="#">Features</a><a href="#">Pricing</a></div>
+        <div class="stack gap-2"><strong>Company</strong><a href="#">About</a><a href="#">Contact</a></div>
+        <div class="stack gap-2"><strong>Legal</strong><a href="#">Terms</a><a href="#">Privacy</a></div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

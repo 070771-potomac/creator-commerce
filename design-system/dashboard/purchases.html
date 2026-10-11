@@ -1,0 +1,34 @@
+<!-- @dsCard group="Dashboard" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Purchases</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <script src="../theme.js"></script>
+  <script src="dashboard-shell.js"></script>
+</head>
+<body data-active="purchases">
+  <button id="theme-toggle" class="theme-toggle" type="button">☾ Dark</button>
+  <div id="page-content" style="display:none">
+    <div class="page-head"><div><h1 class="page-title">Purchases</h1><p class="muted" style="margin:.25rem 0 0;">Your order history and receipts.</p></div></div>
+
+    <div class="card">
+      <div class="card-content" style="padding:.5rem 1rem;">
+        <table class="table">
+          <thead><tr><th>Product</th><th>Creator</th><th>Date</th><th>Amount</th><th>Receipt</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>Type Scale Kit</td><td>@maria</td><td>Jul 10</td><td class="tabular">$19.00</td><td><a href="#" style="text-decoration:none;color:var(--primary);">PDF</a></td><td style="text-align:right;"><a class="btn btn-outline btn-sm" href="downloads.html">Download</a></td></tr>
+            <tr><td>Mockup Bundle</td><td>@stefan</td><td>Jul 02</td><td class="tabular">$32.00</td><td><a href="#" style="text-decoration:none;color:var(--primary);">PDF</a></td><td style="text-align:right;"><a class="btn btn-outline btn-sm" href="downloads.html">Download</a></td></tr>
+            <tr><td>Sound FX Pack</td><td>@dj_ana</td><td>Jun 28</td><td class="tabular">$14.00</td><td><a href="#" style="text-decoration:none;color:var(--primary);">PDF</a></td><td style="text-align:right;"><a class="btn btn-outline btn-sm" href="downloads.html">Download</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <p class="muted" style="font-size:.8125rem;">Need the files? Your library lives in <a href="downloads.html" style="color:var(--foreground);">Downloads</a>.</p>
+  </div>
+</body>
+</html>

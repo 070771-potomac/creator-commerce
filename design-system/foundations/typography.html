@@ -1,0 +1,56 @@
+<!-- @dsCard group="Foundations" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Foundations — Typography</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <script src="../theme.js"></script>
+  <style>
+    .spec { color: var(--muted-foreground); font-family: var(--font-mono); font-size: 0.72rem; }
+    .sample-row { padding: 1rem 0; border-bottom: 1px solid var(--border); }
+  </style>
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle" type="button">☾ Dark</button>
+  <div class="container" style="padding-block:2.5rem;max-width:820px;">
+    <a href="../index.html" class="muted" style="font-size:.8125rem;text-decoration:none;">← Design System</a>
+    <h1 class="font-heading" style="font-size:1.75rem;margin:.5rem 0 .25rem;">Typography</h1>
+    <p class="muted" style="margin-top:0;">Headings în <strong>Roboto</strong> (<code>--font-heading</code>), body în <strong>Nunito Sans</strong> (<code>--font-sans</code>).</p>
+
+    <div style="margin-top:1.5rem;">
+      <div class="sample-row">
+        <div class="spec">Roboto · 2.25rem · 700</div>
+        <div class="font-heading" style="font-size:2.25rem;font-weight:700;">Sell what you create</div>
+      </div>
+      <div class="sample-row">
+        <div class="spec">Roboto · 1.5rem · 600</div>
+        <div class="font-heading" style="font-size:1.5rem;font-weight:600;">Your storefront, your rules</div>
+      </div>
+      <div class="sample-row">
+        <div class="spec">Roboto · 1.125rem · 600</div>
+        <div class="font-heading" style="font-size:1.125rem;font-weight:600;">Recent orders</div>
+      </div>
+      <div class="sample-row">
+        <div class="spec">Nunito Sans · 1rem · 400 — body</div>
+        <p style="margin:.35rem 0 0;">Creators publish digital products, get paid through Stripe, and buyers download protected files instantly. This is the default paragraph size used across the app.</p>
+      </div>
+      <div class="sample-row">
+        <div class="spec">Nunito Sans · 0.875rem · 400 — small</div>
+        <p style="margin:.35rem 0 0;font-size:.875rem;">Secondary copy, table cells, and helper text sit at this size.</p>
+      </div>
+      <div class="sample-row">
+        <div class="spec">Nunito Sans · 0.8125rem · 600 — label / muted</div>
+        <p class="muted" style="margin:.35rem 0 0;font-size:.8125rem;font-weight:600;">EMAIL ADDRESS</p>
+      </div>
+      <div class="sample-row" style="border-bottom:0;">
+        <div class="spec">Mono — prices / handles / routes</div>
+        <p style="margin:.35rem 0 0;font-family:var(--font-mono);">@alexpopovici · /@alexpopovici/ui-kit · $24.00</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

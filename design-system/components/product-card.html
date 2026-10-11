@@ -1,0 +1,57 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Components — ProductCard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <script src="../theme.js"></script>
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle" type="button">☾ Dark</button>
+  <div class="container" style="padding-block:2.5rem;">
+    <a href="../index.html" class="muted" style="font-size:.8125rem;text-decoration:none;">← Design System</a>
+    <h1 class="font-heading" style="font-size:1.75rem;margin:.5rem 0 .25rem;">ProductCard</h1>
+    <p class="muted" style="margin-top:0;">Cardul folosit în grilele de storefront și wishlist. Hover ridică ușor cardul.</p>
+
+    <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr));margin-top:1.5rem;">
+      <article class="product-card">
+        <div class="cover">cover 16:10</div>
+        <div class="body">
+          <div class="p-title">Notion Dashboard Kit</div>
+          <div class="muted" style="font-size:.8125rem;">42-page productivity system</div>
+          <div class="p-meta">
+            <span class="price">$24.00</span>
+            <span class="badge badge-secondary">PDF</span>
+          </div>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="cover">cover 16:10</div>
+        <div class="body">
+          <div class="p-title">Lo-fi Sample Pack</div>
+          <div class="muted" style="font-size:.8125rem;">120 loops, royalty-free</div>
+          <div class="p-meta">
+            <span class="price">$18.00</span>
+            <span class="badge badge-secondary">ZIP</span>
+          </div>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="cover">cover 16:10</div>
+        <div class="body">
+          <div class="p-title">Icon Set — 300 SVG</div>
+          <div class="muted" style="font-size:.8125rem;">Pixel-perfect, dark ready</div>
+          <div class="p-meta">
+            <span class="price">$9.00</span>
+            <span class="badge badge-secondary">SVG</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Components — Buttons, Badges, Card, Input</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <script src="../theme.js"></script>
+  <style>
+    .demo { display:flex; flex-direction:column; gap:2rem; }
+    .demo section { }
+    .demo h2 { font-family:var(--font-heading); font-size:1rem; margin:0 0 .75rem; }
+    .demo .swatchrow { display:flex; gap:.75rem; flex-wrap:wrap; align-items:center; }
+  </style>
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle" type="button">☾ Dark</button>
+  <div class="container" style="padding-block:2.5rem;max-width:860px;">
+    <a href="../index.html" class="muted" style="font-size:.8125rem;text-decoration:none;">← Design System</a>
+    <h1 class="font-heading" style="font-size:1.75rem;margin:.5rem 0 1.5rem;">Components — primitives</h1>
+
+    <div class="demo">
+      <section>
+        <h2>Button — variants</h2>
+        <div class="swatchrow">
+          <button class="btn btn-primary">Primary</button>
+          <button class="btn btn-outline">Outline</button>
+          <button class="btn btn-ghost">Ghost</button>
+          <button class="btn btn-primary" disabled style="opacity:.5;cursor:not-allowed;">Disabled</button>
+        </div>
+      </section>
+
+      <section>
+        <h2>Button — sizes</h2>
+        <div class="swatchrow">
+          <button class="btn btn-primary btn-sm">Small</button>
+          <button class="btn btn-primary">Default</button>
+          <button class="btn btn-primary btn-lg">Large</button>
+        </div>
+      </section>
+
+      <section>
+        <h2>Badge — status</h2>
+        <div class="swatchrow">
+          <span class="badge badge-default">Published</span>
+          <span class="badge badge-secondary">Draft</span>
+          <span class="badge badge-outline">Archived</span>
+          <span class="badge badge-destructive">Refunded</span>
+        </div>
+      </section>
+
+      <section>
+        <h2>Card</h2>
+        <div class="card" style="max-width:360px;">
+          <div class="card-header">
+            <div class="card-title">Revenue</div>
+            <div class="card-desc">Last 30 days</div>
+          </div>
+          <div class="card-content">
+            <div class="font-heading" style="font-size:1.75rem;">$48,120</div>
+            <div class="row gap-2" style="margin-top:.5rem;">
+              <span class="badge badge-secondary">+12.4%</span>
+              <span class="muted" style="font-size:.75rem;">vs last month</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Input & Label</h2>
+        <div class="field" style="max-width:360px;">
+          <label class="label" for="email">Email</label>
+          <input class="input" id="email" type="email" placeholder="you@example.com" />
+        </div>
+      </section>
+
+      <section>
+        <h2>Separator</h2>
+        <div style="max-width:360px;">
+          <div>Above</div>
+          <hr class="separator" style="margin:.75rem 0;" />
+          <div>Below</div>
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+</html>

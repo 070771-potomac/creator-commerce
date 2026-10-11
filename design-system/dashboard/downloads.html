@@ -1,0 +1,34 @@
+<!-- @dsCard group="Dashboard" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Downloads</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <script src="../theme.js"></script>
+  <script src="dashboard-shell.js"></script>
+</head>
+<body data-active="downloads">
+  <button id="theme-toggle" class="theme-toggle" type="button">☾ Dark</button>
+  <div id="page-content" style="display:none">
+    <div class="page-head"><div><h1 class="page-title">Downloads</h1><p class="muted" style="margin:.25rem 0 0;">Protected files from everything you've bought.</p></div></div>
+
+    <div class="card">
+      <div class="card-content" style="padding:.5rem 1rem;">
+        <table class="table">
+          <thead><tr><th>File</th><th>Product</th><th>Type</th><th>Size</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>type-scale-kit.zip</td><td>Type Scale Kit</td><td><span class="badge badge-secondary">ZIP</span></td><td class="tabular">12.4 MB</td><td style="text-align:right;"><button class="btn btn-primary btn-sm">Download</button></td></tr>
+            <tr><td>mockup-bundle.zip</td><td>Mockup Bundle</td><td><span class="badge badge-secondary">ZIP</span></td><td class="tabular">88.1 MB</td><td style="text-align:right;"><button class="btn btn-primary btn-sm">Download</button></td></tr>
+            <tr><td>sound-fx-pack.zip</td><td>Sound FX Pack</td><td><span class="badge badge-secondary">ZIP</span></td><td class="tabular">210 MB</td><td style="text-align:right;"><button class="btn btn-primary btn-sm">Download</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <p class="muted" style="font-size:.8125rem;">Download links are time-limited and tied to your account.</p>
+  </div>
+</body>
+</html>

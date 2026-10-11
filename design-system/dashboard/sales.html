@@ -1,0 +1,40 @@
+<!-- @dsCard group="Dashboard" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Sales</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <script src="../theme.js"></script>
+  <script src="dashboard-shell.js"></script>
+</head>
+<body data-active="sales">
+  <button id="theme-toggle" class="theme-toggle" type="button">☾ Dark</button>
+  <div id="page-content" style="display:none">
+    <div class="page-head"><div><h1 class="page-title">Sales</h1><p class="muted" style="margin:.25rem 0 0;">Every order across your products.</p></div></div>
+
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));">
+      <div class="card card-content"><div class="card-desc">This month</div><div class="font-heading" style="font-size:1.5rem;">$8,240</div></div>
+      <div class="card card-content"><div class="card-desc">Orders</div><div class="font-heading" style="font-size:1.5rem;">214</div></div>
+      <div class="card card-content"><div class="card-desc">Avg. order</div><div class="font-heading" style="font-size:1.5rem;">$38.50</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-content" style="padding:.5rem 1rem;">
+        <table class="table">
+          <thead><tr><th>Order</th><th>Buyer</th><th>Product</th><th>Date</th><th>Status</th><th style="text-align:right;">Total</th></tr></thead>
+          <tbody>
+            <tr><td class="tabular">#1042</td><td>Ada Lovelace</td><td>Notion Dashboard Kit</td><td>Jul 14</td><td><span class="badge badge-default">Paid</span></td><td class="tabular" style="text-align:right;">$24.00</td></tr>
+            <tr><td class="tabular">#1041</td><td>Alan Turing</td><td>Icon Set — 300 SVG</td><td>Jul 14</td><td><span class="badge badge-default">Paid</span></td><td class="tabular" style="text-align:right;">$9.00</td></tr>
+            <tr><td class="tabular">#1040</td><td>Grace Hopper</td><td>Portfolio Template</td><td>Jul 13</td><td><span class="badge badge-destructive">Refunded</span></td><td class="tabular" style="text-align:right;">$29.00</td></tr>
+            <tr><td class="tabular">#1039</td><td>Katherine J.</td><td>Wallpaper Bundle</td><td>Jul 13</td><td><span class="badge badge-secondary">Pending</span></td><td class="tabular" style="text-align:right;">$6.00</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

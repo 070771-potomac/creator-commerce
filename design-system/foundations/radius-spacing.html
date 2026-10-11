@@ -1,0 +1,48 @@
+<!-- @dsCard group="Foundations" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Foundations — Radius & spacing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <script src="../theme.js"></script>
+  <style>
+    .demo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap: 1rem; }
+    .r-box { height: 90px; background: var(--muted); border: 1px solid var(--border); display: flex; align-items: flex-end; padding: .5rem; }
+    .r-box span { font-family: var(--font-mono); font-size: .72rem; color: var(--muted-foreground); }
+    .sp-bar { background: var(--primary); height: 14px; border-radius: 3px; }
+    .sp-row { display: flex; align-items: center; gap: .75rem; padding: .35rem 0; }
+    .sp-row code { font-family: var(--font-mono); font-size: .72rem; color: var(--muted-foreground); width: 90px; }
+  </style>
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle" type="button">☾ Dark</button>
+  <div class="container" style="padding-block:2.5rem;max-width:820px;">
+    <a href="../index.html" class="muted" style="font-size:.8125rem;text-decoration:none;">← Design System</a>
+    <h1 class="font-heading" style="font-size:1.75rem;margin:.5rem 0 .25rem;">Radius & spacing</h1>
+    <p class="muted" style="margin-top:0;">Bază: <code>--radius: 0.45rem</code>. Radius-urile derivate scalează de aici.</p>
+
+    <h2 class="font-heading" style="font-size:1.1rem;margin:1.5rem 0 .75rem;">Radius</h2>
+    <div class="demo-grid">
+      <div class="r-box" style="border-radius:var(--radius-sm)"><span>sm · ×0.6</span></div>
+      <div class="r-box" style="border-radius:var(--radius-md)"><span>md · ×0.8</span></div>
+      <div class="r-box" style="border-radius:var(--radius-lg)"><span>lg · base</span></div>
+      <div class="r-box" style="border-radius:var(--radius-xl)"><span>xl · ×1.4</span></div>
+      <div class="r-box" style="border-radius:999px"><span>full</span></div>
+    </div>
+
+    <h2 class="font-heading" style="font-size:1.1rem;margin:2rem 0 .75rem;">Spacing scale</h2>
+    <div>
+      <div class="sp-row"><code>0.5rem</code><div class="sp-bar" style="width:.5rem"></div></div>
+      <div class="sp-row"><code>0.75rem</code><div class="sp-bar" style="width:.75rem"></div></div>
+      <div class="sp-row"><code>1rem</code><div class="sp-bar" style="width:1rem"></div></div>
+      <div class="sp-row"><code>1.5rem</code><div class="sp-bar" style="width:1.5rem"></div></div>
+      <div class="sp-row"><code>2rem</code><div class="sp-bar" style="width:2rem"></div></div>
+      <div class="sp-row"><code>3rem</code><div class="sp-bar" style="width:3rem"></div></div>
+    </div>
+  </div>
+</body>
+</html>

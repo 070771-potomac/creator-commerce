@@ -1,0 +1,53 @@
+<!-- @dsCard group="Centered-card" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Centered-card — Signup</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <script src="../theme.js"></script>
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle" type="button">☾ Dark</button>
+  <div class="center-screen">
+    <div class="card auth-card">
+      <div class="card-header" style="text-align:center;align-items:center;">
+        <div class="card-title font-heading" style="font-size:1.25rem;">Create your account</div>
+        <div class="card-desc">Pick a handle — it becomes your public storefront.</div>
+      </div>
+      <div class="card-content">
+        <form class="stack gap-4">
+          <div class="field">
+            <label class="label" for="name">Name</label>
+            <input class="input" id="name" type="text" placeholder="Alexandru Popovici" />
+          </div>
+          <div class="field">
+            <label class="label" for="handle">Handle</label>
+            <div class="row" style="border:1px solid var(--input);border-radius:var(--radius-md);overflow:hidden;">
+              <span class="muted" style="padding:0 .25rem 0 .75rem;font-family:var(--font-mono);">/@</span>
+              <input class="input" id="handle" type="text" placeholder="alexpopovici" style="border:0;padding-left:.15rem;" />
+            </div>
+          </div>
+          <div class="field">
+            <label class="label" for="email">Email</label>
+            <input class="input" id="email" type="email" placeholder="you@example.com" />
+          </div>
+          <div class="field">
+            <label class="label" for="password">Password</label>
+            <input class="input" id="password" type="password" placeholder="••••••••" />
+          </div>
+          <button class="btn btn-primary btn-block" type="button">Create account</button>
+        </form>
+      </div>
+      <div class="card-footer" style="text-align:center;">
+        <span class="muted" style="font-size:.875rem;">Already have an account?
+          <a href="login.html" style="color:var(--foreground);font-weight:600;">Log in</a>
+        </span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

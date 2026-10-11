@@ -1,0 +1,48 @@
+<!-- @dsCard group="Dashboard" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Edit product</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <script src="../theme.js"></script>
+  <script src="dashboard-shell.js"></script>
+  <style>
+    .drop { border:1px dashed var(--border); border-radius:var(--radius-lg); padding:1.25rem; text-align:center; color:var(--muted-foreground); font-size:.875rem; }
+    .edit-grid { display:grid; grid-template-columns: 1.4fr .9fr; gap:1.25rem; align-items:start; }
+    @media (max-width:820px){ .edit-grid{ grid-template-columns:1fr; } }
+  </style>
+</head>
+<body data-active="products">
+  <button id="theme-toggle" class="theme-toggle" type="button">☾ Dark</button>
+  <div id="page-content" style="display:none">
+    <div class="page-head">
+      <div><h1 class="page-title">Edit product</h1><p class="muted" style="margin:.25rem 0 0;">Notion Dashboard Kit</p></div>
+      <div class="row gap-2"><span class="badge badge-default">Published</span><button class="btn btn-primary btn-sm">Save</button></div>
+    </div>
+
+    <div class="edit-grid">
+      <div class="card"><div class="card-content stack gap-4">
+        <div class="field"><label class="label">Title</label><input class="input" value="Notion Dashboard Kit" /></div>
+        <div class="field"><label class="label">Description</label><textarea class="input" rows="4">A 42-page Notion system to plan projects, track habits and manage a content calendar.</textarea></div>
+        <div class="grid" style="grid-template-columns:1fr 1fr;">
+          <div class="field"><label class="label">Price</label><input class="input" value="24.00" style="font-family:var(--font-mono);" /></div>
+          <div class="field"><label class="label">Status</label><input class="input" value="Published" /></div>
+        </div>
+        <hr class="separator" />
+        <div class="field"><label class="label">SEO title</label><input class="input" value="Notion Dashboard Kit — plan everything" /></div>
+        <div class="field"><label class="label">SEO description</label><textarea class="input" rows="2">Duplicate-ready Notion dashboard for makers.</textarea></div>
+      </div></div>
+
+      <div class="stack gap-3">
+        <div class="card"><div class="card-header"><div class="card-title">Digital asset</div></div><div class="card-content"><div class="drop">Drop file or click to upload<br /><span style="font-size:.75rem;">notion-kit.zip · 12.4 MB uploaded</span></div></div></div>
+        <div class="card"><div class="card-header"><div class="card-title">Cover image</div></div><div class="card-content"><div class="drop">Drop image or click to upload</div></div></div>
+        <div class="card"><div class="card-header"><div class="card-title">AI product page</div><div class="card-desc">Generate copy & teaser from the file</div></div><div class="card-content"><button class="btn btn-outline btn-block">✨ Generate with AI</button></div></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

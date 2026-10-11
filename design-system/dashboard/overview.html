@@ -1,0 +1,61 @@
+<!-- @dsCard group="Dashboard" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Overview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <script src="../theme.js"></script>
+  <script src="dashboard-shell.js"></script>
+</head>
+<body data-active="overview">
+  <button id="theme-toggle" class="theme-toggle" type="button">☾ Dark</button>
+  <div id="page-content" style="display:none">
+    <div class="page-head">
+      <div>
+        <h1 class="page-title">Overview</h1>
+        <p class="muted" style="margin:.25rem 0 0;">Your store performance at a glance.</p>
+      </div>
+      <a class="btn btn-primary" href="product-new.html">New product</a>
+    </div>
+
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));">
+      <div class="card card-content"><div class="card-desc">Revenue</div><div class="font-heading" style="font-size:1.75rem;">$48,120</div><div class="row gap-2" style="margin-top:.35rem;"><span class="badge badge-secondary">+12.4%</span><span class="muted" style="font-size:.72rem;">vs last month</span></div></div>
+      <div class="card card-content"><div class="card-desc">Units sold</div><div class="font-heading" style="font-size:1.75rem;">1,284</div><div class="row gap-2" style="margin-top:.35rem;"><span class="badge badge-secondary">+4.1%</span><span class="muted" style="font-size:.72rem;">vs last month</span></div></div>
+      <div class="card card-content"><div class="card-desc">Wishlist adds</div><div class="font-heading" style="font-size:1.75rem;">312</div><div class="row gap-2" style="margin-top:.35rem;"><span class="badge badge-secondary">+8.7%</span><span class="muted" style="font-size:.72rem;">vs last month</span></div></div>
+    </div>
+
+    <div class="grid" style="grid-template-columns:1.4fr 1fr;">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Top products</div><div class="card-desc">Best sellers this month</div></div>
+        <div class="card-content" style="padding-top:.5rem;">
+          <table class="table">
+            <thead><tr><th>Product</th><th>Units</th><th style="text-align:right;">Revenue</th></tr></thead>
+            <tbody>
+              <tr><td>Notion Dashboard Kit</td><td>420</td><td class="tabular" style="text-align:right;">$10,080</td></tr>
+              <tr><td>Icon Set — 300 SVG</td><td>388</td><td class="tabular" style="text-align:right;">$3,492</td></tr>
+              <tr><td>Lo-fi Sample Pack</td><td>210</td><td class="tabular" style="text-align:right;">$3,780</td></tr>
+              <tr><td>Portfolio Template</td><td>96</td><td class="tabular" style="text-align:right;">$2,784</td></tr>
+              <tr><td>Brand Guidelines</td><td>70</td><td class="tabular" style="text-align:right;">$1,050</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Get your first sale</div><div class="card-desc">Onboarding checklist</div></div>
+        <div class="card-content stack gap-3" style="font-size:.9rem;">
+          <label class="row gap-2"><input type="checkbox" checked /> Create your account</label>
+          <label class="row gap-2"><input type="checkbox" checked /> Pick your handle</label>
+          <label class="row gap-2"><input type="checkbox" /> Publish your first product</label>
+          <label class="row gap-2"><input type="checkbox" /> Connect Stripe</label>
+          <label class="row gap-2"><input type="checkbox" /> Share your storefront</label>
+          <a class="btn btn-outline btn-block" href="help-first-sale.html" style="margin-top:.5rem;">How to sell your first product</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

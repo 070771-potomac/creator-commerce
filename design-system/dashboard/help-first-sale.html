@@ -1,0 +1,34 @@
+<!-- @dsCard group="Dashboard" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — How to sell your first product</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <script src="../theme.js"></script>
+  <script src="dashboard-shell.js"></script>
+  <style>
+    .guide { max-width:680px; }
+    .guide li { margin-bottom: .5rem; }
+    .step-card { display:flex; gap:1rem; align-items:flex-start; }
+    .step-card .step-num { flex:0 0 auto; }
+  </style>
+</head>
+<body data-active="help">
+  <button id="theme-toggle" class="theme-toggle" type="button">☾ Dark</button>
+  <div id="page-content" style="display:none">
+    <div class="page-head"><div><h1 class="page-title">How to sell your first product</h1><p class="muted" style="margin:.25rem 0 0;">A 5-minute walkthrough from upload to first sale.</p></div></div>
+
+    <div class="stack gap-3 guide">
+      <div class="card card-content step-card"><div class="step-num" style="width:2rem;height:2rem;border-radius:999px;background:color-mix(in oklch,var(--primary) 15%,transparent);color:var(--primary);font-weight:800;display:flex;align-items:center;justify-content:center;">1</div><div><strong>Create the product</strong><p class="muted" style="margin:.25rem 0 0;">Add a title, price and short description in <a href="product-new.html" style="color:var(--foreground);">New product</a>.</p></div></div>
+      <div class="card card-content step-card"><div class="step-num" style="width:2rem;height:2rem;border-radius:999px;background:color-mix(in oklch,var(--primary) 15%,transparent);color:var(--primary);font-weight:800;display:flex;align-items:center;justify-content:center;">2</div><div><strong>Upload your file & cover</strong><p class="muted" style="margin:.25rem 0 0;">Attach the digital asset and a cover image, then let AI draft the page.</p></div></div>
+      <div class="card card-content step-card"><div class="step-num" style="width:2rem;height:2rem;border-radius:999px;background:color-mix(in oklch,var(--primary) 15%,transparent);color:var(--primary);font-weight:800;display:flex;align-items:center;justify-content:center;">3</div><div><strong>Publish & connect Stripe</strong><p class="muted" style="margin:.25rem 0 0;">Switch the status to Published so it appears on your storefront.</p></div></div>
+      <div class="card card-content step-card"><div class="step-num" style="width:2rem;height:2rem;border-radius:999px;background:color-mix(in oklch,var(--primary) 15%,transparent);color:var(--primary);font-weight:800;display:flex;align-items:center;justify-content:center;">4</div><div><strong>Share your storefront</strong><p class="muted" style="margin:.25rem 0 0;">Send your <code>/@handle</code> link. Buyers pay and get instant downloads.</p></div></div>
+      <a class="btn btn-primary" href="product-new.html" style="align-self:flex-start;">Create my first product</a>
+    </div>
+  </div>
+</body>
+</html>

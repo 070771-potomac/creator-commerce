@@ -1,0 +1,242 @@
+/* Creator Commerce — shared design-system styles.
+ * Tokens extracted verbatim from app/globals.css so previews match the real app.
+ * Plain CSS, no build step: open any preview .html directly in a browser. */
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.153 0.006 107.1);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.153 0.006 107.1);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.153 0.006 107.1);
+  --primary: oklch(0.527 0.154 150.069);
+  --primary-foreground: oklch(0.982 0.018 155.826);
+  --secondary: oklch(0.967 0.001 286.375);
+  --secondary-foreground: oklch(0.21 0.006 285.885);
+  --muted: oklch(0.966 0.005 106.5);
+  --muted-foreground: oklch(0.58 0.031 107.3);
+  --accent: oklch(0.966 0.005 106.5);
+  --accent-foreground: oklch(0.228 0.013 107.4);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.93 0.007 106.5);
+  --input: oklch(0.93 0.007 106.5);
+  --ring: oklch(0.737 0.021 106.9);
+  --radius: 0.45rem;
+  --sidebar: oklch(0.988 0.003 106.5);
+  --sidebar-foreground: oklch(0.153 0.006 107.1);
+  --sidebar-primary: oklch(0.627 0.194 149.214);
+  --sidebar-accent: oklch(0.966 0.005 106.5);
+  --sidebar-border: oklch(0.93 0.007 106.5);
+
+  --font-heading: "Roboto", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Nunito Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "Geist Mono", SFMono-Regular, monospace;
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+}
+
+.dark {
+  --background: oklch(0.153 0.006 107.1);
+  --foreground: oklch(0.988 0.003 106.5);
+  --card: oklch(0.228 0.013 107.4);
+  --card-foreground: oklch(0.988 0.003 106.5);
+  --popover: oklch(0.228 0.013 107.4);
+  --popover-foreground: oklch(0.988 0.003 106.5);
+  --primary: oklch(0.448 0.119 151.328);
+  --primary-foreground: oklch(0.982 0.018 155.826);
+  --secondary: oklch(0.274 0.006 286.033);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.286 0.016 107.4);
+  --muted-foreground: oklch(0.737 0.021 106.9);
+  --accent: oklch(0.286 0.016 107.4);
+  --accent-foreground: oklch(0.988 0.003 106.5);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.58 0.031 107.3);
+  --sidebar: oklch(0.228 0.013 107.4);
+  --sidebar-foreground: oklch(0.988 0.003 106.5);
+  --sidebar-primary: oklch(0.723 0.219 149.579);
+  --sidebar-accent: oklch(0.286 0.016 107.4);
+  --sidebar-border: oklch(1 0 0 / 10%);
+}
+
+* { box-sizing: border-box; }
+
+html { font-family: var(--font-sans); }
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, .font-heading {
+  font-family: var(--font-heading);
+  letter-spacing: -0.01em;
+}
+
+a { color: inherit; }
+
+.muted { color: var(--muted-foreground); }
+.tabular { font-variant-numeric: tabular-nums; }
+.container { width: 100%; max-width: 1120px; margin-inline: auto; padding-inline: 1.5rem; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  height: 2.5rem; padding-inline: 1rem; border-radius: var(--radius-md);
+  font-family: var(--font-sans); font-size: 0.875rem; font-weight: 600;
+  border: 1px solid transparent; cursor: pointer; text-decoration: none;
+  transition: background 120ms ease, border-color 120ms ease, opacity 120ms ease;
+}
+.btn-primary { background: var(--primary); color: var(--primary-foreground); }
+.btn-primary:hover { opacity: 0.9; }
+.btn-outline { background: transparent; border-color: var(--border); color: var(--foreground); }
+.btn-outline:hover { background: var(--accent); }
+.btn-ghost { background: transparent; color: var(--foreground); }
+.btn-ghost:hover { background: var(--accent); }
+.btn-sm { height: 2rem; padding-inline: 0.75rem; font-size: 0.8125rem; }
+.btn-lg { height: 3rem; padding-inline: 1.5rem; font-size: 1rem; }
+.btn-block { width: 100%; }
+
+/* ---------- Badges ---------- */
+.badge {
+  display: inline-flex; align-items: center; gap: 0.25rem;
+  padding: 0.125rem 0.5rem; border-radius: 999px;
+  font-size: 0.75rem; font-weight: 600; line-height: 1.4;
+  border: 1px solid transparent;
+}
+.badge-default { background: var(--primary); color: var(--primary-foreground); }
+.badge-secondary { background: var(--secondary); color: var(--secondary-foreground); }
+.badge-outline { border-color: var(--border); color: var(--muted-foreground); }
+.badge-destructive { background: var(--destructive); color: white; }
+
+/* ---------- Cards ---------- */
+.card {
+  background: var(--card); color: var(--card-foreground);
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.card-pad { padding: 1.25rem; }
+.card-header { padding: 1.25rem 1.25rem 0; display: flex; flex-direction: column; gap: 0.25rem; }
+.card-title { font-size: 1rem; font-weight: 600; }
+.card-desc { font-size: 0.8125rem; color: var(--muted-foreground); }
+.card-content { padding: 1.25rem; }
+.card-footer { padding: 0 1.25rem 1.25rem; }
+
+/* ---------- Forms ---------- */
+.label { font-size: 0.8125rem; font-weight: 600; }
+.input {
+  height: 2.5rem; width: 100%; padding-inline: 0.75rem;
+  background: var(--background); color: var(--foreground);
+  border: 1px solid var(--input); border-radius: var(--radius-md);
+  font-size: 0.875rem; font-family: var(--font-sans);
+}
+.input::placeholder { color: var(--muted-foreground); }
+.input:focus { outline: 2px solid var(--ring); outline-offset: 1px; }
+.field { display: flex; flex-direction: column; gap: 0.5rem; }
+textarea.input { height: auto; padding: 0.625rem 0.75rem; resize: vertical; }
+
+/* ---------- Separator ---------- */
+.separator { height: 1px; background: var(--border); border: 0; margin: 0; }
+
+/* ---------- Layout helpers ---------- */
+.stack { display: flex; flex-direction: column; }
+.row { display: flex; align-items: center; }
+.between { justify-content: space-between; }
+.gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; }
+.grid { display: grid; gap: 1rem; }
+.wrap { flex-wrap: wrap; }
+
+/* ---------- Tables ---------- */
+.table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.table th {
+  text-align: left; font-weight: 600; color: var(--muted-foreground);
+  font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.03em;
+  padding: 0.625rem 0.75rem; border-bottom: 1px solid var(--border);
+}
+.table td { padding: 0.75rem; border-bottom: 1px solid var(--border); }
+.table tr:last-child td { border-bottom: 0; }
+
+/* ---------- Product card (storefront grid) ---------- */
+.product-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden; display: flex; flex-direction: column;
+  transition: border-color 120ms ease, transform 120ms ease;
+}
+.product-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+.product-card .cover {
+  aspect-ratio: 16 / 10; background:
+    linear-gradient(135deg, color-mix(in oklch, var(--primary) 22%, var(--card)), var(--muted));
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted-foreground); font-size: 0.75rem;
+}
+.product-card .body { padding: 0.875rem 1rem; display: flex; flex-direction: column; gap: 0.35rem; flex: 1; }
+.product-card .p-title { font-weight: 700; font-size: 0.95rem; }
+.product-card .p-meta { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 0.5rem; }
+.product-card .price { font-family: var(--font-mono); font-weight: 700; }
+
+/* ---------- Site header / footer (marketing + storefront) ---------- */
+.site-header {
+  position: sticky; top: 0; z-index: 40; backdrop-filter: blur(8px);
+  background: color-mix(in oklch, var(--background) 82%, transparent);
+  border-bottom: 1px solid var(--border);
+}
+.site-header .inner { display: flex; align-items: center; justify-content: space-between; height: 3.75rem; }
+.brand { display: flex; align-items: center; gap: 0.55rem; font-family: var(--font-heading); font-weight: 700; text-decoration: none; }
+.brand .dot { width: 1.35rem; height: 1.35rem; border-radius: 6px; background: var(--primary); }
+.nav-links { display: flex; align-items: center; gap: 1.25rem; }
+.nav-links a { text-decoration: none; font-size: 0.875rem; color: var(--muted-foreground); }
+.nav-links a:hover { color: var(--foreground); }
+.site-footer { border-top: 1px solid var(--border); color: var(--muted-foreground); font-size: 0.8125rem; }
+.site-footer .inner { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: space-between; padding-block: 2rem; }
+.site-footer a { text-decoration: none; color: var(--muted-foreground); }
+.site-footer a:hover { color: var(--foreground); }
+
+/* ---------- Hero ---------- */
+.hero { padding: 4.5rem 0 3.5rem; }
+.hero h1 { font-size: clamp(2rem, 5vw, 3.25rem); line-height: 1.05; margin: 0.75rem 0; }
+.hero p.lead { font-size: 1.125rem; color: var(--muted-foreground); max-width: 46ch; }
+.eyebrow { display: inline-flex; align-items: center; gap: .4rem; font-size: .8125rem; font-weight: 700; color: var(--primary); background: color-mix(in oklch, var(--primary) 12%, transparent); padding: .25rem .7rem; border-radius: 999px; }
+
+/* ---------- Dashboard shell ---------- */
+.app { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+.app-sidebar { background: var(--sidebar); color: var(--sidebar-foreground); border-right: 1px solid var(--sidebar-border); padding: 1rem 0.75rem; }
+.app-sidebar .side-brand { display: flex; align-items: center; gap: .55rem; font-family: var(--font-heading); font-weight: 700; padding: .5rem .5rem 1rem; }
+.side-section { font-size: .68rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted-foreground); padding: .9rem .6rem .35rem; }
+.side-link { display: flex; align-items: center; gap: .6rem; padding: .5rem .6rem; border-radius: var(--radius-md); text-decoration: none; font-size: .875rem; color: var(--sidebar-foreground); }
+.side-link:hover { background: var(--sidebar-accent); }
+.side-link.active { background: color-mix(in oklch, var(--sidebar-primary) 16%, transparent); color: var(--sidebar-primary); font-weight: 600; }
+.app-main { display: flex; flex-direction: column; min-width: 0; }
+.app-topbar { height: 3.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding-inline: 1.5rem; }
+.app-content { padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
+.page-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.page-title { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 600; margin: 0; }
+.empty { border: 1px dashed var(--border); border-radius: var(--radius-lg); padding: 2.5rem; text-align: center; color: var(--muted-foreground); }
+
+@media (max-width: 720px) {
+  .app { grid-template-columns: 1fr; }
+  .app-sidebar { display: none; }
+}
+
+/* ---------- Centered-card layout ---------- */
+.center-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem; background: var(--muted); }
+.auth-card { width: 100%; max-width: 24rem; }
+.icon-circle { width: 3rem; height: 3rem; border-radius: 999px; display: flex; align-items: center; justify-content: center; margin-inline: auto; font-size: 1.35rem; }
+.icon-circle.ok { background: color-mix(in oklch, var(--primary) 18%, transparent); color: var(--primary); }
+.icon-circle.warn { background: color-mix(in oklch, var(--destructive) 16%, transparent); color: var(--destructive); }
+
+/* ---------- Dark-mode toggle button (preview chrome) ---------- */
+.theme-toggle {
+  position: fixed; top: 1rem; right: 1rem; z-index: 50;
+  height: 2.25rem; padding-inline: 0.875rem; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--card); color: var(--foreground);
+  font-size: 0.8125rem; font-weight: 600; cursor: pointer; font-family: var(--font-sans);
+}

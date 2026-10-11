@@ -1,0 +1,26 @@
+<!-- @dsCard group="Dashboard" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Wishlist</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <script src="../theme.js"></script>
+  <script src="dashboard-shell.js"></script>
+</head>
+<body data-active="wishlist">
+  <button id="theme-toggle" class="theme-toggle" type="button">☾ Dark</button>
+  <div id="page-content" style="display:none">
+    <div class="page-head"><div><h1 class="page-title">Wishlist</h1><p class="muted" style="margin:.25rem 0 0;">Products you saved from storefronts.</p></div></div>
+
+    <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr));">
+      <article class="product-card"><div class="cover">cover</div><div class="body"><div class="p-title">3D Icon Pack</div><div class="muted" style="font-size:.8125rem;">@stefan</div><div class="p-meta"><span class="price">$22.00</span><a class="btn btn-primary btn-sm" href="../storefront/product.html">Buy</a></div></div></article>
+      <article class="product-card"><div class="cover">cover</div><div class="body"><div class="p-title">Resume Templates</div><div class="muted" style="font-size:.8125rem;">@maria</div><div class="p-meta"><span class="price">$12.00</span><a class="btn btn-primary btn-sm" href="../storefront/product.html">Buy</a></div></div></article>
+      <article class="product-card"><div class="cover">cover</div><div class="body"><div class="p-title">Ambient Loops</div><div class="muted" style="font-size:.8125rem;">@dj_ana</div><div class="p-meta"><span class="price">$16.00</span><a class="btn btn-primary btn-sm" href="../storefront/product.html">Buy</a></div></div></article>
+    </div>
+  </div>
+</body>
+</html>

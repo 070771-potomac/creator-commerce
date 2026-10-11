@@ -1,0 +1,38 @@
+<!-- @dsCard group="Dashboard" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Create product</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <script src="../theme.js"></script>
+  <script src="dashboard-shell.js"></script>
+</head>
+<body data-active="products">
+  <button id="theme-toggle" class="theme-toggle" type="button">☾ Dark</button>
+  <div id="page-content" style="display:none">
+    <div class="page-head"><div><h1 class="page-title">New product</h1><p class="muted" style="margin:.25rem 0 0;">Start with the basics — you can add the file and cover next.</p></div></div>
+
+    <div class="card" style="max-width:640px;">
+      <div class="card-content">
+        <form class="stack gap-4">
+          <div class="field"><label class="label" for="title">Title</label><input class="input" id="title" placeholder="e.g. Notion Dashboard Kit" /></div>
+          <div class="field"><label class="label" for="slug">Slug</label><input class="input" id="slug" placeholder="notion-dashboard-kit" style="font-family:var(--font-mono);" /></div>
+          <div class="field"><label class="label" for="desc">Short description</label><textarea class="input" id="desc" rows="3" placeholder="One or two sentences buyers will see."></textarea></div>
+          <div class="grid" style="grid-template-columns:1fr 1fr;">
+            <div class="field"><label class="label" for="price">Price</label><input class="input" id="price" placeholder="24.00" style="font-family:var(--font-mono);" /></div>
+            <div class="field"><label class="label" for="currency">Currency</label><input class="input" id="currency" value="USD" /></div>
+          </div>
+          <div class="row gap-3" style="margin-top:.5rem;">
+            <button class="btn btn-primary" type="button">Create product</button>
+            <a class="btn btn-ghost" href="products.html">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

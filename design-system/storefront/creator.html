@@ -1,0 +1,64 @@
+<!-- @dsCard group="Storefront" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Storefront — Creator (/@handle)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <script src="../theme.js"></script>
+  <style>
+    .creator-hero { display:flex; align-items:center; gap:1rem; padding-block:2rem; }
+    .avatar { width:4rem; height:4rem; border-radius:999px; background:linear-gradient(135deg,var(--primary),color-mix(in oklch,var(--primary) 40%, var(--muted))); }
+  </style>
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle" type="button">☾ Dark</button>
+
+  <header class="site-header">
+    <div class="container inner">
+      <a class="brand" href="../marketing/landing.html"><span class="dot"></span> Creator Commerce</a>
+      <div class="row gap-2">
+        <a class="btn btn-ghost btn-sm" href="../centered-card/login.html">Log in</a>
+        <a class="btn btn-primary btn-sm" href="../centered-card/signup.html">Sign up</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="creator-hero">
+      <div class="avatar"></div>
+      <div class="stack gap-2">
+        <h1 class="font-heading" style="margin:0;font-size:1.5rem;">Alexandru Popovici</h1>
+        <span class="muted" style="font-family:var(--font-mono);">@alexpopovici</span>
+        <p class="muted" style="margin:.25rem 0 0;max-width:52ch;">Design resources, UI kits and templates for indie makers.</p>
+      </div>
+    </div>
+
+    <hr class="separator" />
+
+    <div class="row between" style="margin:1.25rem 0;">
+      <strong>6 products</strong>
+      <span class="muted" style="font-size:.8125rem;">Only published items are public</span>
+    </div>
+
+    <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(230px,1fr));padding-bottom:3rem;">
+      <a class="product-card" href="product.html" style="text-decoration:none;color:inherit;"><div class="cover">cover</div><div class="body"><div class="p-title">Notion Dashboard Kit</div><div class="p-meta"><span class="price">$24.00</span><span class="badge badge-secondary">PDF</span></div></div></a>
+      <a class="product-card" href="product.html" style="text-decoration:none;color:inherit;"><div class="cover">cover</div><div class="body"><div class="p-title">Lo-fi Sample Pack</div><div class="p-meta"><span class="price">$18.00</span><span class="badge badge-secondary">ZIP</span></div></div></a>
+      <a class="product-card" href="product.html" style="text-decoration:none;color:inherit;"><div class="cover">cover</div><div class="body"><div class="p-title">Icon Set — 300 SVG</div><div class="p-meta"><span class="price">$9.00</span><span class="badge badge-secondary">SVG</span></div></div></a>
+      <a class="product-card" href="product.html" style="text-decoration:none;color:inherit;"><div class="cover">cover</div><div class="body"><div class="p-title">Portfolio Template</div><div class="p-meta"><span class="price">$29.00</span><span class="badge badge-secondary">ZIP</span></div></div></a>
+      <a class="product-card" href="product.html" style="text-decoration:none;color:inherit;"><div class="cover">cover</div><div class="body"><div class="p-title">Brand Guidelines</div><div class="p-meta"><span class="price">$15.00</span><span class="badge badge-secondary">PDF</span></div></div></a>
+      <a class="product-card" href="product.html" style="text-decoration:none;color:inherit;"><div class="cover">cover</div><div class="body"><div class="p-title">Wallpaper Bundle</div><div class="p-meta"><span class="price">$6.00</span><span class="badge badge-secondary">IMG</span></div></div></a>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container inner">
+      <span>Powered by Creator Commerce</span>
+      <a href="../marketing/landing.html">Open your own store →</a>
+    </div>
+  </footer>
+</body>
+</html>
