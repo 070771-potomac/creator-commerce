@@ -8,9 +8,9 @@ import {
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ProductCard } from "@/components/product-card";
 import {
   Card,
-  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -112,18 +112,7 @@ export default function Home() {
 
           <div className="grid grid-cols-2 gap-4">
             {sampleProducts.map((product) => (
-              <Card key={product.title} className="pt-0">
-                <div className="flex aspect-4/3 items-center justify-center bg-muted text-xs text-muted-foreground">
-                  cover
-                </div>
-                <CardContent className="flex flex-col gap-2">
-                  <span className="font-medium">{product.title}</span>
-                  <div className="flex items-center justify-between">
-                    <span>{product.price}</span>
-                    <Badge variant="secondary">{product.type}</Badge>
-                  </div>
-                </CardContent>
-              </Card>
+              <ProductCard key={product.title} {...product} />
             ))}
           </div>
         </section>
