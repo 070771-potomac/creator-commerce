@@ -23,7 +23,7 @@ import {
 import Link from "next/link";
 
 const navItems = [
-  { title: "Dashboard", href: "/" },
+  { title: "Dashboard", href: "/dashboard" },
   { title: "Settings", href: "/settings" },
   { title: "Products", href: "/products" },
 ];
