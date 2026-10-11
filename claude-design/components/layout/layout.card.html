@@ -1,0 +1,30 @@
+<!-- @dsCard group="Components" viewport="700x380" name="Layout" subtitle="Card, Dialog, Sheet" -->
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+<script src="../_preview.js"></script>
+<style>body{padding:20px;font-size:14px}.lbl{font:500 11px var(--font-mono);color:var(--muted-foreground);text-transform:uppercase;letter-spacing:.04em}</style></head>
+<body><div id="root"></div>
+<script type="text/babel">
+loadDS("../../").then(DS => {
+const { Icon, Button, Badge, Separator, Skeleton, Tooltip, Avatar, Input, Textarea, Select, Label, Checkbox, Switch, Card, CardHeader, CardContent, CardFooter, Sheet, Dialog, Sidebar, SidebarGroup, SidebarItem, NavigationMenu, Table, Toast, EmptyState } = DS;
+const Row = ({ label, children, gap = 8 }) => <div style={{ display: "grid", gridTemplateColumns: "96px 1fr", alignItems: "center", gap: 12 }}><span className="lbl">{label}</span><div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap }}>{children}</div></div>;
+function App() {
+const [d, setD] = React.useState(true);
+return <div style={{ display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: 16 }}>
+  <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+    <Card><CardHeader title="Revenue" description="Last 30 days" action={<Button variant="ghost" size="icon-sm" icon="ellipsis" />} />
+      <CardContent><div style={{ fontFamily: "var(--font-heading)", fontSize: 30, fontWeight: 500 }}>€1,284.00</div></CardContent></Card>
+    <Card size="sm"><CardHeader title="Small card" description="12px spacing" /><CardFooter><Button size="sm">View sales</Button></CardFooter></Card>
+  </div>
+  <div style={{ position: "relative", borderRadius: "var(--radius-xl)", overflow: "hidden", background: "var(--muted)", minHeight: 340 }}>
+    <Dialog contained open={d} onClose={() => setD(false)} title="Delete product?" description="Buyers keep access to files they already purchased."
+      footer={<><Button variant="outline" onClick={() => setD(false)}>Cancel</Button><Button variant="destructive">Delete</Button></>} />
+    {!d ? <div style={{ padding: 16, display: "flex", gap: 8 }}><Button onClick={() => setD(true)}>Open dialog</Button></div> : null}
+  </div>
+</div>;
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+});
+</script></body></html>

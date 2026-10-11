@@ -1,0 +1,33 @@
+<!-- @dsCard group="Components" viewport="700x400" name="Navigation" subtitle="Sidebar, NavigationMenu" -->
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+<script src="../_preview.js"></script>
+<style>body{padding:20px;font-size:14px}.lbl{font:500 11px var(--font-mono);color:var(--muted-foreground);text-transform:uppercase;letter-spacing:.04em}</style></head>
+<body><div id="root"></div>
+<script type="text/babel">
+loadDS("../../").then(DS => {
+const { Icon, Button, Badge, Separator, Skeleton, Tooltip, Avatar, Input, Textarea, Select, Label, Checkbox, Switch, Card, CardHeader, CardContent, CardFooter, Sheet, Dialog, Sidebar, SidebarGroup, SidebarItem, NavigationMenu, Table, Toast, EmptyState } = DS;
+const Row = ({ label, children, gap = 8 }) => <div style={{ display: "grid", gridTemplateColumns: "96px 1fr", alignItems: "center", gap: 12 }}><span className="lbl">{label}</span><div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap }}>{children}</div></div>;
+function App() {
+const [a, setA] = React.useState("Overview");
+const it = (icon, label, badge) => <SidebarItem icon={icon} label={label} badge={badge} active={a === label} onClick={() => setA(label)} />;
+return <div style={{ display: "flex", height: 360, borderRadius: "var(--radius-xl)", boxShadow: "0 0 0 1px var(--ring-card)", overflow: "hidden" }}>
+  <Sidebar header={<div style={{ padding: "6px 8px", fontFamily: "var(--font-heading)", fontWeight: 500, fontSize: 15 }}>My-E-Commerce</div>}>
+    <SidebarGroup>{it("layout-dashboard", "Overview")}</SidebarGroup>
+    <SidebarGroup label="Selling">{it("package", "Products", 12)}{it("receipt", "Sales")}</SidebarGroup>
+    <SidebarGroup label="Buying">{it("shopping-bag", "Purchases")}{it("download", "Downloads")}</SidebarGroup>
+  </Sidebar>
+  <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+    <div style={{ height: 56, borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", gap: 8, padding: "0 16px" }}>
+      <Button variant="ghost" size="icon-sm" icon="panel-left" /><div style={{ flex: 1, fontWeight: 500 }}>{a}</div>
+      <NavigationMenu items={[{ label: "Account", align: "end", items: [{ label: "Profile", icon: "user" }, { label: "Settings", icon: "settings" }, { label: "Log out", icon: "log-out" }] }]} />
+    </div>
+    <div style={{ flex: 1, background: "var(--background)" }} />
+  </div>
+</div>;
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+});
+</script></body></html>

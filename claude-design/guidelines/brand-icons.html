@@ -1,0 +1,7 @@
+<!-- @dsCard group="Brand" viewport="700x120" name="Iconography" subtitle="Phosphor regular, 16px" -->
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../styles.css">
+<style>body{padding:20px;font-family:var(--font-sans);font-size:13px}.row{display:flex;gap:12px;flex-wrap:wrap}.sw{display:flex;flex-direction:column;gap:6px;width:120px}.chip{height:56px;border-radius:var(--radius-lg);box-shadow:0 0 0 1px var(--ring-card)}.n{font-weight:600}.v{font-family:var(--font-mono);font-size:11px;color:var(--muted-foreground)}.i{width:20px;height:20px;background:var(--foreground);-webkit-mask:var(--u) center/contain no-repeat;mask:var(--u) center/contain no-repeat}</style></head><body><div class="row" id="icons" style="gap:18px;align-items:center"></div><div class="v" style="margin-top:14px">squares-four · package · receipt · shopping-bag · download-simple · heart · users · gear · question · upload-simple · sparkle · file types · credit-card</div>
+<script>
+const names = ["squares-four","package","receipt","shopping-bag","download-simple","heart","users","gear","question","upload-simple","sparkle","file-text","image","music-note","file-zip","credit-card"];
+document.getElementById("icons").innerHTML = names.map(n => '<span class="i" title="' + n + '" style="--u:url(https://unpkg.com/@phosphor-icons/core@2.1.1/assets/regular/' + n + '.svg)"></span>').join("");
+</script></body></html>

@@ -1,0 +1,27 @@
+<!-- @dsCard group="Components" viewport="700x300" name="Forms" subtitle="Input, Textarea, Select, Label, Checkbox, Switch" -->
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+<script src="../_preview.js"></script>
+<style>body{padding:20px;font-size:14px}.lbl{font:500 11px var(--font-mono);color:var(--muted-foreground);text-transform:uppercase;letter-spacing:.04em}</style></head>
+<body><div id="root"></div>
+<script type="text/babel">
+loadDS("../../").then(DS => {
+const { Icon, Button, Badge, Separator, Skeleton, Tooltip, Avatar, Input, Textarea, Select, Label, Checkbox, Switch, Card, CardHeader, CardContent, CardFooter, Sheet, Dialog, Sidebar, SidebarGroup, SidebarItem, NavigationMenu, Table, Toast, EmptyState } = DS;
+const Row = ({ label, children, gap = 8 }) => <div style={{ display: "grid", gridTemplateColumns: "96px 1fr", alignItems: "center", gap: 12 }}><span className="lbl">{label}</span><div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap }}>{children}</div></div>;
+function App() {
+return <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}><Label htmlFor="t">Title</Label><Input id="t" placeholder="Lightroom preset pack" /></div>
+  <div style={{ display: "grid", gridTemplateColumns: "1fr 96px", gap: 8 }}><div style={{ display: "flex", flexDirection: "column", gap: 8 }}><Label>Price</Label><Input invalid defaultValue="-5" /></div><div style={{ display: "flex", flexDirection: "column", gap: 8 }}><Label>Currency</Label><Select options={["EUR", "RON", "USD"]} /></div>
+    <span style={{ gridColumn: "1 / -1", fontSize: 12, color: "var(--destructive)" }}>Price must be at least €1.00</span></div>
+  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}><Label hint="Optional">SEO description</Label><Textarea rows={3} placeholder="Shown in search results" /></div>
+  <div style={{ display: "flex", flexDirection: "column", gap: 12, paddingTop: 24 }}>
+    <Checkbox defaultChecked label="Connect Stripe" /><Checkbox label="Publish your first product" />
+    <Switch defaultChecked label="Email me about new sales" /><Switch label="Published" /><Input disabled placeholder="Disabled" />
+  </div>
+</div>;
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+});
+</script></body></html>

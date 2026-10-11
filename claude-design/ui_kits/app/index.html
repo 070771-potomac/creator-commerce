@@ -1,0 +1,32 @@
+<!-- @dsCard group="Web app" viewport="1280x800" name="My-E-Commerce app" subtitle="Click-through: landing, auth, storefront, checkout, dashboard" -->
+<!doctype html><html><head><meta charset="utf-8"><title>My-E-Commerce — UI kit</title>
+<link rel="stylesheet" href="../../styles.css">
+<style>html,body,#root{height:100%}body{overflow:hidden}</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+<script src="../../components/_preview.js"></script>
+<script src="data.js"></script>
+<script type="text/babel" src="Placeholder.jsx"></script>
+<script type="text/babel" src="Marketing.jsx"></script>
+<script type="text/babel" src="CenteredCard.jsx"></script>
+<script type="text/babel" src="Storefront.jsx"></script>
+<script type="text/babel" src="Dashboard.jsx"></script>
+</head><body><div id="root"></div>
+<script type="text/babel">
+const SCREENS = [["landing", "/"], ["login", "/login"], ["signup", "/signup"], ["storefront", "/@alexpopovici"], ["product", "/@alexpopovici/warm-film-presets"], ["success", "/checkout/success"], ["cancel", "/checkout/cancel"], ["dashboard", "/dashboard"]];
+function App() {
+  const [s, setS] = React.useState(() => localStorage.getItem("cc-kit-screen") || "dashboard");
+  const [sub, setSub] = React.useState("Overview");
+  const go = (k, p) => { setS(k); localStorage.setItem("cc-kit-screen", k); if (p) setSub(p); };
+  const view = { landing: <Landing go={go} />, login: <AuthPage mode="login" go={go} />, signup: <AuthPage mode="signup" go={go} />, storefront: <Storefront go={go} />,
+    product: <ProductPage go={go} />, success: <CheckoutPage ok go={go} />, cancel: <CheckoutPage go={go} />, dashboard: <DashboardShell go={go} initial={sub} /> }[s];
+  return <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+    <div style={{ flex: 1, minHeight: 0, overflow: "auto" }}>{view}</div>
+    <div style={{ position: "fixed", left: "50%", bottom: 12, transform: "translateX(-50%)", zIndex: 70, display: "flex", gap: 2, padding: 3, borderRadius: 9999, background: "var(--foreground)", boxShadow: "var(--shadow-lg)" }}>
+      {SCREENS.map(([k, path]) => <button key={k} onClick={() => go(k, k === "dashboard" ? "Overview" : null)} style={{ border: 0, cursor: "pointer", borderRadius: 9999, padding: "5px 10px", whiteSpace: "nowrap", font: "500 11px var(--font-mono)",
+        background: s === k ? "var(--background)" : "transparent", color: s === k ? "var(--foreground)" : "color-mix(in oklch, var(--background) 75%, transparent)" }}>{path}</button>)}
+    </div></div>;
+}
+loadDS("../../").then(DS => { window.DS = DS; ReactDOM.createRoot(document.getElementById("root")).render(<App />); });
+</script></body></html>
