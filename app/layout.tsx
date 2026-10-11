@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Nunito_Sans, Roboto } from "next/font/google";
+import { Geist, Geist_Mono, Nunito_Sans, Roboto, Oxanium } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
-const robotoHeading = Roboto({subsets:['latin'],variable:'--font-heading'});
+const geistHeading = Geist({subsets:['latin'],variable:'--font-heading'});
 
-const nunitoSans = Nunito_Sans({subsets:['latin'],variable:'--font-sans'});
+const oxanium = Oxanium({subsets:['latin'],variable:'--font-sans'});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +31,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", nunitoSans.variable, robotoHeading.variable)}
+      className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", oxanium.variable, geistHeading.variable)}
     >
       <body className="min-h-full flex flex-col">
         <TooltipProvider>{children}</TooltipProvider>
