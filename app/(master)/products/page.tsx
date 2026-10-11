@@ -12,14 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-// Sample data until products come from the database (S4–S5).
-const products = [
-  { id: "1", title: "Notion Dashboard Kit", status: "Published", price: "$24.00", sales: 420 },
-  { id: "2", title: "Icon Set — 300 SVG", status: "Published", price: "$9.00", sales: 388 },
-  { id: "3", title: "Portfolio Template v2", status: "Draft", price: "$29.00", sales: 0 },
-  { id: "4", title: "Wallpaper Bundle", status: "Published", price: "$6.00", sales: 150 },
-];
+import { products } from "@/lib/sample-data";
 
 export default function ProductsPage() {
   return (
