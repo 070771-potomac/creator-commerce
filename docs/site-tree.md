@@ -57,7 +57,7 @@ Public shell: header with logo + login/signup CTA, footer. Unauthenticated.
 
 | Route | Page | Archetype | Key features | Sessions |
 |---|---|---|---|---|
-| `/` | Landing / home | Landing | Platform intro, links to login/signup. Exists today as `app/(master)/page.tsx` — should move to a public group, otherwise it inherits the dashboard shell. | S1 |
+| `/` | Landing / home | Landing | Platform intro, links to login/signup. Lives in `app/(public)/page.tsx`, outside the dashboard shell. | S1 |
 
 ## 2. Storefront layout
 
@@ -74,7 +74,7 @@ Single centered card, no nav. One shell design, two contexts: auth and checkout 
 
 | Route | Page | Archetype | Key features | Sessions |
 |---|---|---|---|---|
-| `/login` | Login | Card | Better Auth email/password, redirect after sign-in (exists) | S6 |
+| `/login` | Login | Card | Better Auth email/password, redirect after sign-in | S6 |
 | `/signup` | Registration | Card | Account creation + public `handle` selection | S6 |
 | `/checkout/success` | Payment confirmation | Card | Stripe success URL; confirmation + link to `/downloads` | S9 |
 | `/checkout/cancel` | Payment cancelled | Card | Stripe cancel URL; back to the product page | S9 |
