@@ -9,6 +9,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/product-card";
+import { SiteHeader } from "@/components/site-header";
 import {
   Card,
   CardDescription,
@@ -65,21 +66,7 @@ const features = [
 export default function Home() {
   return (
     <div className="flex min-h-full flex-col">
-      <header className="border-b">
-        <div className="mx-auto flex h-14 w-full max-w-5xl items-center gap-4 px-4">
-          <Link href="/" className="font-heading text-base font-medium">
-            My-E-Commerce
-          </Link>
-          <div className="ml-auto flex items-center gap-2">
-            <Button variant="ghost" nativeButton={false} render={<Link href="/login" />}>
-              Log in
-            </Button>
-            <Button nativeButton={false} render={<Link href="/signup" />}>
-              Sign up
-            </Button>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main>
         <section className="mx-auto grid w-full max-w-5xl items-center gap-10 px-4 py-16 md:grid-cols-2 md:py-24">

@@ -11,9 +11,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 
+import { CenteredCardShell } from "@/components/centered-card-shell";
+
 export default function LoginPage() {
   return (
-    <div className="flex min-h-screen flex-1 items-center justify-center bg-muted/40 p-4">
+    <CenteredCardShell>
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Welcome back</CardTitle>
@@ -65,6 +67,6 @@ export default function LoginPage() {
           </p>
         </CardFooter>
       </Card>
-    </div>
+    </CenteredCardShell>
   );
 }
