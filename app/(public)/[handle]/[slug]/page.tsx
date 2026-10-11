@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { parseHandleSegment } from "@/lib/handle";
-import { creator, getPublishedProductBySlug } from "@/lib/sample-data";
+import { getPublicProduct } from "@/lib/dal/storefront";
 
 const perks = [
   "Instant, protected download",
@@ -27,8 +27,8 @@ export default async function ProductPage({
 }) {
   const { handle: segment, slug } = await params;
   const handle = parseHandleSegment(segment);
-  // Drafts are never public, so they 404 like unknown products.
-  const product = handle === creator.handle ? getPublishedProductBySlug(slug) : undefined;
+  // null for an unknown creator, a slug of another creator, or a Draft → 404.
+  const product = handle ? await getPublicProduct(handle, slug) : null;
   if (!product) notFound();
 
   return (
@@ -38,8 +38,8 @@ export default async function ProductPage({
       <main className="mx-auto grid w-full max-w-5xl flex-1 gap-10 px-4 py-10 md:grid-cols-[1.4fr_1fr]">
         <div className="flex flex-col gap-6">
           <p className="text-sm text-muted-foreground">
-            <Link href={`/@${creator.handle}`} className="hover:text-foreground">
-              @{creator.handle}
+            <Link href={`/@${product.creatorHandle}`} className="hover:text-foreground">
+              @{product.creatorHandle}
             </Link>{" "}
             / {product.slug}
           </p>
@@ -82,7 +82,7 @@ export default async function ProductPage({
                 <span className="font-heading text-3xl font-medium tabular-nums">
                   {product.price}
                 </span>
-                <Badge>{product.status}</Badge>
+                <Badge>Published</Badge>
               </div>
               {/* Starts Stripe Checkout in S9; the success page is shown for now. */}
               <Button size="lg" nativeButton={false} render={<Link href="/checkout/success" />}>

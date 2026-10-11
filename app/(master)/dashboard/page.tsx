@@ -1,7 +1,7 @@
 import Link from "next/link";
 import {
   CurrencyDollarIcon,
-  HeartIcon,
+  ReceiptIcon,
   PackageIcon,
   PlusIcon,
 } from "@phosphor-icons/react/ssr";
@@ -22,34 +22,46 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { getDashboardMetrics } from "@/lib/dal/metrics";
 
-const stats = [
-  { title: "Revenue", value: "$48,120", delta: "+12.4%", icon: CurrencyDollarIcon },
-  { title: "Units sold", value: "1,284", delta: "+4.1%", icon: PackageIcon },
-  { title: "Wishlist adds", value: "312", delta: "+8.7%", icon: HeartIcon },
-];
+export default async function DashboardPage() {
+  // All numbers are computed in the DAL from the user's own sales.
+  const metrics = await getDashboardMetrics();
 
-const topProducts = [
-  { name: "Notion Dashboard Kit", units: 420, revenue: "$10,080" },
-  { name: "Icon Set — 300 SVG", units: 388, revenue: "$3,492" },
-  { name: "Lo-fi Sample Pack", units: 210, revenue: "$3,780" },
-  { name: "Portfolio Template", units: 96, revenue: "$2,784" },
-  { name: "Brand Guidelines", units: 70, revenue: "$1,050" },
-];
+  const stats = [
+    {
+      title: "Revenue",
+      value: metrics.revenue,
+      detail: `from ${metrics.unitsSold} paid orders`,
+      icon: CurrencyDollarIcon,
+    },
+    {
+      title: "Orders",
+      value: String(metrics.orders),
+      detail: `${metrics.pendingOrders} pending · ${metrics.refundedOrders} refunded`,
+      icon: ReceiptIcon,
+    },
+    {
+      title: "Published products",
+      value: String(metrics.publishedProducts),
+      detail: `${metrics.draftProducts} draft`,
+      icon: PackageIcon,
+    },
+  ];
 
-const checklist = [
-  { id: "account", label: "Create your account", done: true },
-  { id: "handle", label: "Pick your handle", done: true },
-  { id: "publish", label: "Publish your first product", done: false },
-  { id: "stripe", label: "Connect Stripe", done: false },
-  { id: "share", label: "Share your storefront", done: false },
-];
+  // "Publish" is ticked from real data; the others become real in S6 (account)
+  // and S9 (Stripe).
+  const checklist = [
+    { id: "account", label: "Create your account", done: true },
+    { id: "handle", label: "Pick your handle", done: true },
+    { id: "publish", label: "Publish your first product", done: metrics.publishedProducts > 0 },
+    { id: "stripe", label: "Connect Stripe", done: false },
+    { id: "share", label: "Share your storefront", done: false },
+  ];
 
-export default function DashboardPage() {
   return (
     <div className="flex flex-col gap-6 p-6">
       <div className="flex items-center justify-between gap-4">
@@ -77,9 +89,8 @@ export default function DashboardPage() {
                 <stat.icon className="size-4 text-muted-foreground" />
               </CardAction>
             </CardHeader>
-            <CardContent className="flex items-center gap-2">
-              <Badge variant="secondary">{stat.delta}</Badge>
-              <span className="text-xs text-muted-foreground">vs last month</span>
+            <CardContent>
+              <span className="text-xs text-muted-foreground">{stat.detail}</span>
             </CardContent>
           </Card>
         ))}
@@ -89,7 +100,7 @@ export default function DashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle>Top products</CardTitle>
-            <CardDescription>Best sellers this month</CardDescription>
+            <CardDescription>By revenue from paid orders</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
@@ -101,9 +112,16 @@ export default function DashboardPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {topProducts.map((product) => (
-                  <TableRow key={product.name}>
-                    <TableCell className="font-medium">{product.name}</TableCell>
+                {metrics.topProducts.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={3} className="text-center text-muted-foreground">
+                      No paid orders yet.
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {metrics.topProducts.map((product) => (
+                  <TableRow key={product.title}>
+                    <TableCell className="font-medium">{product.title}</TableCell>
                     <TableCell className="tabular-nums">{product.units}</TableCell>
                     <TableCell className="text-right tabular-nums">
                       {product.revenue}

@@ -11,9 +11,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { purchases } from "@/lib/sample-data";
+import { getMyPurchases } from "@/lib/dal/purchases";
 
-export default function PurchasesPage() {
+export default async function PurchasesPage() {
+  // Only orders where the signed-in user is the buyer (filtered in the DAL).
+  const purchases = await getMyPurchases();
+
   return (
     <div className="flex flex-col gap-6 p-6">
       <div>
@@ -41,7 +44,7 @@ export default function PurchasesPage() {
               {purchases.map((order) => (
                 <TableRow key={order.id}>
                   <TableCell className="font-medium">{order.product}</TableCell>
-                  <TableCell>{order.creator}</TableCell>
+                  <TableCell>{order.creatorHandle}</TableCell>
                   <TableCell>{order.date}</TableCell>
                   <TableCell className="text-right tabular-nums">{order.amount}</TableCell>
                   <TableCell>

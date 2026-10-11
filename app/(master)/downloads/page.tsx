@@ -11,9 +11,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { purchases } from "@/lib/sample-data";
+import { getMyDownloads } from "@/lib/dal/purchases";
 
-export default function DownloadsPage() {
+export default async function DownloadsPage() {
+  // Only the user's own Paid purchases unlock a file (filtered in the DAL).
+  const downloads = await getMyDownloads();
+
   return (
     <div className="flex flex-col gap-6 p-6">
       <div>
@@ -40,7 +43,7 @@ export default function DownloadsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {purchases.map((item) => (
+              {downloads.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">{item.file}</TableCell>
                   <TableCell>{item.product}</TableCell>

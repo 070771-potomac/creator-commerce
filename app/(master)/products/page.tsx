@@ -12,9 +12,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { products } from "@/lib/sample-data";
+import { getMyProducts } from "@/lib/dal/products";
 
-export default function ProductsPage() {
+export default async function ProductsPage() {
+  // Only the signed-in user's products, filtered by ownerId in the DAL.
+  const products = await getMyProducts();
+
   return (
     <div className="flex flex-col gap-6 p-6">
       <div className="flex items-center justify-between gap-4">

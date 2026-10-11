@@ -1,7 +1,10 @@
 import { ProductCard } from "@/components/product-card";
-import { wishlist } from "@/lib/sample-data";
+import { getMyWishlist } from "@/lib/dal/wishlist";
 
-export default function WishlistPage() {
+export default async function WishlistPage() {
+  // Only the signed-in user's saved products, still Published (filtered in the DAL).
+  const wishlist = await getMyWishlist();
+
   return (
     <div className="flex flex-col gap-6 p-6">
       <div>
@@ -18,7 +21,7 @@ export default function WishlistPage() {
           <ProductCard
             key={item.id}
             title={item.title}
-            description={item.creator}
+            description={item.creatorHandle}
             price={item.price}
             type={item.type}
             href={item.href}

@@ -15,14 +15,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { creator, getProductById } from "@/lib/sample-data";
+import { getProductForEdit } from "@/lib/dal/products";
 
 export default async function EditProductPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const product = getProductById((await params).id);
+  // null when the product is missing or belongs to another user → 404.
+  const product = await getProductForEdit((await params).id);
   if (!product) notFound();
 
   return (
@@ -42,7 +43,7 @@ export default async function EditProductPage({
             <Button
               variant="outline"
               nativeButton={false}
-              render={<Link href={`/@${creator.handle}/${product.slug}`} />}
+              render={<Link href={product.publicUrl} />}
             >
               View page
             </Button>

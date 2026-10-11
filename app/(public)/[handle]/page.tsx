@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { ProductCard } from "@/components/product-card";
 import { SiteHeader } from "@/components/site-header";
 import { parseHandleSegment } from "@/lib/handle";
-import { creator, products } from "@/lib/sample-data";
+import { getStorefront } from "@/lib/dal/storefront";
 
 export default async function StorefrontPage({
   params,
@@ -12,10 +12,10 @@ export default async function StorefrontPage({
   params: Promise<{ handle: string }>;
 }) {
   const handle = parseHandleSegment((await params).handle);
-  // Only the sample creator exists until creators come from the database (S13).
-  if (handle !== creator.handle) notFound();
-
-  const published = products.filter((product) => product.status === "Published");
+  // Unknown handle → null → 404. The DAL returns only Published products.
+  const creator = handle ? await getStorefront(handle) : null;
+  if (!creator) notFound();
+  const published = creator.products;
 
   return (
     <div className="flex min-h-full flex-col">
@@ -48,7 +48,7 @@ export default async function StorefrontPage({
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {published.map((product) => (
             <ProductCard
-              key={product.id}
+              key={product.slug}
               title={product.title}
               price={product.price}
               type={product.type}

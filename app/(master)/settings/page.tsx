@@ -16,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { creator } from "@/lib/sample-data";
+import { getMyProfile } from "@/lib/dal/users";
 
 const countries = ["Romania", "Germany", "France", "United States"];
 
@@ -25,7 +25,10 @@ const notifications = [
   { id: "notifyWeekly", label: "Weekly summary of my store", defaultChecked: false },
 ];
 
-export default function SettingsPage() {
+export default async function SettingsPage() {
+  // The signed-in user's own profile (read in the DAL).
+  const profile = await getMyProfile();
+
   return (
     <div className="flex flex-col gap-6 p-6">
       <div>
@@ -46,16 +49,16 @@ export default function SettingsPage() {
           <CardContent className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <Label htmlFor="displayName">Display name</Label>
-              <Input id="displayName" name="displayName" defaultValue={creator.name} />
+              <Input id="displayName" name="displayName" defaultValue={profile.displayName} />
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="handle">Public handle</Label>
               <div className="flex items-center gap-1">
                 <span className="text-sm text-muted-foreground">@</span>
-                <Input id="handle" name="handle" defaultValue={creator.handle} />
+                <Input id="handle" name="handle" defaultValue={profile.handle} />
               </div>
               <p className="text-xs text-muted-foreground">
-                Your storefront address: /@{creator.handle}
+                Your storefront address: /@{profile.handle}
               </p>
             </div>
           </CardContent>
@@ -73,7 +76,7 @@ export default function SettingsPage() {
                 id="deliveryEmail"
                 name="deliveryEmail"
                 type="email"
-                defaultValue={creator.email}
+                defaultValue={profile.deliveryEmail}
               />
             </div>
             {notifications.map((option) => (
@@ -97,7 +100,7 @@ export default function SettingsPage() {
           <CardContent className="grid gap-4 sm:grid-cols-2">
             <div className="flex flex-col gap-2">
               <Label htmlFor="billingName">Name or company</Label>
-              <Input id="billingName" name="billingName" defaultValue={creator.name} />
+              <Input id="billingName" name="billingName" defaultValue={profile.displayName} />
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="country">Country</Label>
