@@ -1,7 +1,7 @@
 import "server-only";
 
 import { requireUser } from "@/lib/dal/auth";
-import { users } from "@/lib/sample-data";
+import { follows, products, users } from "@/lib/sample-data";
 
 export type MyProfile = {
   displayName: string;
@@ -22,4 +22,36 @@ export async function getMyProfile(): Promise<MyProfile> {
     handle: record.handle,
     deliveryEmail: record.email,
   };
+}
+
+export type FollowedCreator = {
+  name: string;
+  handle: string;
+  bio: string;
+  publishedProducts: number;
+};
+
+// /following — creators the signed-in user follows (filtered by followerId).
+// The product count is computed from Published products only, so it matches
+// what visitors actually see on that creator's storefront. Emails stay out.
+export async function getMyFollowing(): Promise<FollowedCreator[]> {
+  const user = await requireUser();
+
+  return follows
+    .filter((follow) => follow.followerId === user.id)
+    .flatMap((follow) => {
+      const followed = users.find((u) => u.id === follow.followingId);
+      if (!followed) return [];
+
+      return [
+        {
+          name: followed.name,
+          handle: followed.handle,
+          bio: followed.bio,
+          publishedProducts: products.filter(
+            (p) => p.ownerId === followed.id && p.status === "Published",
+          ).length,
+        },
+      ];
+    });
 }

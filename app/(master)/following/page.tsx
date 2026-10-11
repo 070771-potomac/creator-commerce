@@ -8,9 +8,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { following } from "@/lib/sample-data";
+import { getMyFollowing } from "@/lib/dal/users";
 
-export default function FollowingPage() {
+export default async function FollowingPage() {
+  // Only creators the signed-in user follows (filtered in the DAL).
+  const following = await getMyFollowing();
+
   return (
     <div className="flex flex-col gap-6 p-6">
       <div>
@@ -42,7 +45,7 @@ export default function FollowingPage() {
             </CardHeader>
             <CardContent className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">
-                {person.products} products
+                {person.publishedProducts} products
               </span>
               <Button
                 variant="outline"

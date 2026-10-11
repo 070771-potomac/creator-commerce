@@ -259,10 +259,18 @@ export const wishlist: WishlistItem[] = [
   { id: "w-3", userId: "user-1", productId: "12" }, // Ambient Loops (@dj_ana)
 ];
 
-// ── following (moved behind the DAL in a later step) ─────────────────────
+// ── following ────────────────────────────────────────────────────────────
 
-export const following = [
-  { handle: "maria", name: "Maria Ionescu", bio: "Type and layout kits for editorial design.", products: 8 },
-  { handle: "stefan", name: "Stefan Radu", bio: "Mockups and 3D assets for product shots.", products: 14 },
-  { handle: "dj_ana", name: "Ana Dumitru", bio: "Loops, samples and sound effects.", products: 22 },
+// One row per "user X follows creator Y". Name, bio and product count are
+// NOT copied here: the DAL reads them from users/products, so they are always
+// current. Becomes the `follows` table in S5.
+export type Follow = {
+  followerId: string;
+  followingId: string;
+};
+
+export const follows: Follow[] = [
+  { followerId: "user-1", followingId: "user-2" }, // @maria
+  { followerId: "user-1", followingId: "user-3" }, // @stefan
+  { followerId: "user-1", followingId: "user-4" }, // @dj_ana
 ];
