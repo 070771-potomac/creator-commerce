@@ -7,6 +7,12 @@ const nextConfig: NextConfig = {
   // Parts of a page that wait on request data must sit inside <Suspense>
   // (or a loading.tsx file).
   cacheComponents: true,
+  images: {
+    // Cover images are stored in UploadThing (S8) and served from
+    // <app id>.ufs.sh/f/<file key>. next/image only optimizes images from
+    // hosts listed here — any other external URL is refused.
+    remotePatterns: [{ protocol: "https", hostname: "*.ufs.sh", pathname: "/f/**" }],
+  },
 };
 
 export default nextConfig;

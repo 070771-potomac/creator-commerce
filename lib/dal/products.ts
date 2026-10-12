@@ -5,7 +5,7 @@ import { cacheTag, updateTag } from "next/cache";
 import { db } from "@/db";
 import { products, purchases } from "@/db/schema";
 import { requireUser } from "@/lib/dal/auth";
-import { formatCents, isUuid } from "@/lib/dal/format";
+import { formatBytes, formatCents, isUuid } from "@/lib/dal/format";
 import { tags } from "@/lib/dal/tags";
 import type {
   CreateProductOutput,
@@ -43,6 +43,10 @@ export type ProductForEdit = {
   status: ProductStatus;
   // Public storefront URL, built here so the page doesn't need the user's handle.
   publicUrl: string;
+  // The uploaded digital asset — name and size only, never its location
+  // (that is for buyers, S11). null until a file is uploaded.
+  file: { name: string; size: string } | null;
+  coverUrl: string | null;
 };
 
 // /products — the signed-in user's own products, and nobody else's.
@@ -119,6 +123,11 @@ async function productForOwner(
     currency: product.currency as Currency,
     status: product.status,
     publicUrl: `/@${ownerHandle}/${product.slug}`,
+    file:
+      product.fileKey && product.fileName
+        ? { name: product.fileName, size: formatBytes(product.fileSizeBytes ?? 0) }
+        : null,
+    coverUrl: product.coverUrl,
   };
 }
 

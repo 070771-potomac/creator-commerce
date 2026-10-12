@@ -17,19 +17,24 @@ export type CurrentUser = {
   email: string;
 };
 
-// The real security check for every dashboard page and every DAL function
-// (Next.js auth guide: "Creating a Data Access Layer"). No valid session →
-// the user is sent to /login and no data is ever read.
+// Who is signed in, or null. Used where a redirect makes no sense — e.g. the
+// upload route (app/api/uploadthing), which must answer with an error instead.
 // cache() runs it once per request, shared by every DAL function that calls it.
-export const requireUser = cache(async (): Promise<CurrentUser> => {
+export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   // Better Auth reads the session cookie from the request headers, checks its
   // signature and looks the session up in the `session` table (expiry, logout).
   // headers() is request data, so pages using this render per request.
   const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) redirect("/login");
-
-  const user = await userById(session.user.id);
+  if (!session) return null;
   // Session for a user that was deleted meanwhile → treat as logged out.
+  return userById(session.user.id);
+});
+
+// The real security check for every dashboard page and every DAL function
+// (Next.js auth guide: "Creating a Data Access Layer"). No valid session →
+// the user is sent to /login and no data is ever read.
+export const requireUser = cache(async (): Promise<CurrentUser> => {
+  const user = await getCurrentUser();
   if (!user) redirect("/login");
   return user;
 });

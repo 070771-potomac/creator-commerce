@@ -72,9 +72,16 @@ export const products = pgTable(
     priceCents: integer("price_cents").notNull(),
     currency: text("currency").notNull().default("USD"),
     status: productStatus("status").notNull().default("Draft"),
-    // The digital asset (UploadThing in S8).
+    // The digital asset, stored in UploadThing (S8). Only the key is kept, no
+    // URL: the file is what buyers pay for, so download links are created
+    // per buyer (S11), never shown on a public page.
+    fileKey: text("file_key"),
     fileName: text("file_name"),
     fileSizeBytes: integer("file_size_bytes"),
+    // Cover image (UploadThing, S8). Public: shown on the storefront, so the
+    // URL is stored; the key lets us delete the old file when it's replaced.
+    coverKey: text("cover_key"),
+    coverUrl: text("cover_url"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },

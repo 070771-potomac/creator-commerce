@@ -6,6 +6,7 @@
 import { returnValidationErrors } from "next-safe-action";
 
 import { createProduct, setProductStatus, updateProduct } from "@/lib/dal/products";
+import { refreshMyProducts } from "@/lib/dal/uploads";
 import { ActionError, authActionClient } from "@/lib/safe-action";
 import {
   createProductSchema,
@@ -49,3 +50,9 @@ export const setProductStatusAction = authActionClient
     // The confirmed status: the switch keeps it once the server agrees.
     return { status: parsedInput.status };
   });
+
+// After an upload (S8): shows the new file / cover on the edit page.
+// No input — it only refreshes the signed-in user's own products.
+export const refreshAfterUploadAction = authActionClient.action(async () => {
+  await refreshMyProducts();
+});

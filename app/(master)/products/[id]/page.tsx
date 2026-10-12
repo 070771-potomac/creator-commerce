@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { SparkleIcon, UploadSimpleIcon } from "@phosphor-icons/react/ssr";
+import { SparkleIcon } from "@phosphor-icons/react/ssr";
 
 import { EditProductForm } from "@/components/products/edit-product-form";
+import { ProductFiles } from "@/components/products/product-files";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -94,23 +95,16 @@ export default async function EditProductPage({
         <Card>
           <CardHeader>
             <CardTitle>Files</CardTitle>
-            <CardDescription>Uploads are handled by UploadThing (S8).</CardDescription>
+            <CardDescription>The file buyers get, and the cover shown on your storefront.</CardDescription>
           </CardHeader>
-          <CardContent className="flex flex-col gap-4">
-            <div className="flex flex-col gap-2">
-              <Label>Digital asset</Label>
-              <div className="flex flex-col items-center gap-1 border border-dashed p-6 text-center text-sm text-muted-foreground">
-                <UploadSimpleIcon className="size-5" />
-                Drop file or click to upload
-              </div>
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label>Cover image</Label>
-              <div className="flex aspect-16/10 flex-col items-center justify-center gap-1 border border-dashed text-sm text-muted-foreground">
-                <UploadSimpleIcon className="size-5" />
-                Drop image or click to upload
-              </div>
-            </div>
+          <CardContent>
+            {/* Client component: upload zones with progress and error
+                messages; the current file and cover come from the DAL. */}
+            <ProductFiles
+              productId={product.id}
+              file={product.file}
+              coverUrl={product.coverUrl}
+            />
           </CardContent>
         </Card>
       </div>
