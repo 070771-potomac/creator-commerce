@@ -5,9 +5,9 @@
 // (zod schema) and checks the user (authActionClient) before doing anything.
 import { returnValidationErrors } from "next-safe-action";
 
-import { createProduct } from "@/lib/dal/products";
-import { authActionClient } from "@/lib/safe-action";
-import { createProductSchema } from "@/lib/validations/product";
+import { createProduct, updateProduct } from "@/lib/dal/products";
+import { ActionError, authActionClient } from "@/lib/safe-action";
+import { createProductSchema, updateProductSchema } from "@/lib/validations/product";
 
 export const createProductAction = authActionClient
   .inputSchema(createProductSchema) // validated again here, on the server
@@ -23,4 +23,16 @@ export const createProductAction = authActionClient
       });
     }
     return { id: result.id };
+  });
+
+export const updateProductAction = authActionClient
+  .inputSchema(updateProductSchema)
+  .action(async ({ parsedInput }) => {
+    const result = await updateProduct(parsedInput);
+    if (!result.ok) {
+      // Deleted meanwhile, or not this user's product: same safe message,
+      // so nobody learns whether someone else's product id exists.
+      throw new ActionError("This product no longer exists.");
+    }
+    return { saved: true };
   });

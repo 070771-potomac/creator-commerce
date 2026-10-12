@@ -2,10 +2,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SparkleIcon, UploadSimpleIcon } from "@phosphor-icons/react/ssr";
 
+import { EditProductForm } from "@/components/products/edit-product-form";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
+  CardAction,
   CardContent,
   CardDescription,
   CardHeader,
@@ -13,7 +15,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { getProductForEdit } from "@/lib/dal/products";
 
@@ -48,72 +49,43 @@ export default async function EditProductPage({
               View page
             </Button>
           ) : null}
-          {/* Saved with a server action (S7). */}
-          <Button type="submit" form="edit-product">
-            Save
-          </Button>
         </div>
       </div>
 
-      <form id="edit-product" className="grid gap-4 lg:grid-cols-[1.6fr_1fr] lg:items-start">
+      <div className="grid gap-4 lg:grid-cols-[1.6fr_1fr] lg:items-start">
         <div className="flex flex-col gap-4">
           <Card>
             <CardHeader>
               <CardTitle>Details</CardTitle>
+              <CardAction>
+                {/* Generates the description and teaser from the file (S14). */}
+                <Button type="button" variant="outline" size="sm" disabled>
+                  <SparkleIcon />
+                  Generate with AI
+                </Button>
+              </CardAction>
             </CardHeader>
-            <CardContent className="flex flex-col gap-4">
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="title">Title</Label>
-                <Input id="title" name="title" defaultValue={product.title} />
-              </div>
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center justify-between gap-2">
-                  <Label htmlFor="description">Description</Label>
-                  {/* Generates the description and teaser from the file (S14). */}
-                  <Button type="button" variant="outline" size="sm">
-                    <SparkleIcon />
-                    Generate with AI
-                  </Button>
-                </div>
-                <Textarea
-                  id="description"
-                  name="description"
-                  rows={4}
-                  defaultValue={product.description}
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="price">Price</Label>
-                <Input
-                  id="price"
-                  name="price"
-                  defaultValue={product.price.replace("$", "")}
-                />
-              </div>
-              <div className="flex items-center gap-3">
-                <Switch
-                  id="published"
-                  name="published"
-                  defaultChecked={product.status === "Published"}
-                />
-                <Label htmlFor="published">Published</Label>
-              </div>
+            <CardContent>
+              {/* key: a fresh form if the product changes underneath. */}
+              <EditProductForm key={product.id} product={product} />
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
               <CardTitle>SEO</CardTitle>
-              <CardDescription>How this page appears in search results.</CardDescription>
+              <CardDescription>
+                How this page appears in search results. Saved in S13 (Storefront &amp; SEO).
+              </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
                 <Label htmlFor="seoTitle">SEO title</Label>
-                <Input id="seoTitle" name="seoTitle" defaultValue={product.title} />
+                <Input id="seoTitle" defaultValue={product.title} disabled />
               </div>
               <div className="flex flex-col gap-2">
                 <Label htmlFor="seoDescription">SEO description</Label>
-                <Textarea id="seoDescription" name="seoDescription" rows={2} />
+                <Textarea id="seoDescription" rows={2} disabled />
               </div>
             </CardContent>
           </Card>
@@ -141,7 +113,7 @@ export default async function EditProductPage({
             </div>
           </CardContent>
         </Card>
-      </form>
+      </div>
     </div>
   );
 }
