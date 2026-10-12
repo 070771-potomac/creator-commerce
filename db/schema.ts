@@ -1,0 +1,151 @@
+// Database tables, described in TypeScript with Drizzle.
+// drizzle-kit reads this file to generate SQL migrations (npm run db:generate),
+// and lib/dal queries use the same definitions, so every column is type-checked.
+//
+// The tables mirror lib/sample-data.ts from Session 4. The rules below are
+// enforced by Postgres itself, so they hold even if application code has a bug.
+
+import { sql } from "drizzle-orm";
+import {
+  check,
+  index,
+  integer,
+  pgEnum,
+  pgTable,
+  primaryKey,
+  text,
+  timestamp,
+  uniqueIndex,
+  uuid,
+} from "drizzle-orm/pg-core";
+
+// Enums: the column accepts ONLY these values.
+export const productStatus = pgEnum("product_status", ["Draft", "Published"]);
+export const purchaseStatus = pgEnum("purchase_status", ["Pending", "Paid", "Refunded"]);
+
+// ── users ────────────────────────────────────────────────────────────────
+// Text id (not uuid) because Better Auth (S6) creates user ids as text.
+export const users = pgTable(
+  "users",
+  {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    // Public storefront address: /@handle. Unique across all users.
+    handle: text("handle").notNull(),
+    bio: text("bio").notNull().default(""),
+    email: text("email").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("users_handle_unique").on(t.handle),
+    uniqueIndex("users_email_unique").on(t.email),
+  ],
+);
+
+// ── products ─────────────────────────────────────────────────────────────
+export const products = pgTable(
+  "products",
+  {
+    // Random UUID: product ids can't be guessed by counting (/products/2 → 3).
+    id: uuid("id").primaryKey().defaultRandom(),
+    // The owner. Deleting a user deletes their products (unless purchases
+    // reference them — see purchases.productId below).
+    ownerId: text("owner_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    slug: text("slug").notNull(),
+    title: text("title").notNull(),
+    description: text("description").notNull().default(""),
+    type: text("type").notNull(), // PDF, ZIP, IMG… (file-type router in S14)
+    // Money as integer cents: exact sums, no floating-point errors.
+    priceCents: integer("price_cents").notNull(),
+    currency: text("currency").notNull().default("USD"),
+    status: productStatus("status").notNull().default("Draft"),
+    // The digital asset (UploadThing in S8).
+    fileName: text("file_name"),
+    fileSizeBytes: integer("file_size_bytes"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    // One creator can't have two products with the same slug (/@handle/slug).
+    uniqueIndex("products_owner_slug_unique").on(t.ownerId, t.slug),
+    // Fast "products of user X" — the DAL's getMyProducts().
+    index("products_owner_idx").on(t.ownerId),
+    check("products_price_non_negative", sql`${t.priceCents} >= 0`),
+  ],
+);
+
+// ── purchases ────────────────────────────────────────────────────────────
+// One row per order: a purchase for the buyer, a sale for the seller.
+// Created by the Stripe webhook in S10 with the checkout metadata.
+export const purchases = pgTable(
+  "purchases",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    // "restrict": a user or product with purchases can't be deleted —
+    // order history must survive for receipts and accounting.
+    buyerId: text("buyer_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "restrict" }),
+    sellerId: text("seller_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "restrict" }),
+    productId: uuid("product_id")
+      .notNull()
+      .references(() => products.id, { onDelete: "restrict" }),
+    // Price paid at the time of purchase (the product price may change later).
+    amountCents: integer("amount_cents").notNull(),
+    currency: text("currency").notNull().default("USD"),
+    status: purchaseStatus("status").notNull().default("Pending"),
+    // Stripe Checkout session id (S9–S10); unique so a webhook retry
+    // can't record the same payment twice.
+    stripeSessionId: text("stripe_session_id"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index("purchases_buyer_idx").on(t.buyerId), // getMyPurchases / getMyDownloads
+    index("purchases_seller_idx").on(t.sellerId), // getMySales / getDashboardMetrics
+    index("purchases_product_idx").on(t.productId),
+    uniqueIndex("purchases_stripe_session_unique").on(t.stripeSessionId),
+    check("purchases_amount_non_negative", sql`${t.amountCents} >= 0`),
+  ],
+);
+
+// ── wishlist_items ───────────────────────────────────────────────────────
+export const wishlistItems = pgTable(
+  "wishlist_items",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    productId: uuid("product_id")
+      .notNull()
+      .references(() => products.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    // Saving the same product twice is impossible.
+    uniqueIndex("wishlist_user_product_unique").on(t.userId, t.productId),
+  ],
+);
+
+// ── follows ──────────────────────────────────────────────────────────────
+export const follows = pgTable(
+  "follows",
+  {
+    followerId: text("follower_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    followingId: text("following_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    // The pair is the key: following the same creator twice is impossible.
+    primaryKey({ columns: [t.followerId, t.followingId] }),
+    check("follows_not_self", sql`${t.followerId} <> ${t.followingId}`),
+  ],
+);
