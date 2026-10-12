@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  CompassIcon,
   DownloadSimpleIcon,
   GearIcon,
   HeartIcon,
@@ -59,6 +60,8 @@ const navGroups = [
       { title: "Downloads", href: "/downloads", icon: DownloadSimpleIcon },
       { title: "Wishlist", href: "/wishlist", icon: HeartIcon },
       { title: "Following", href: "/following", icon: UsersIcon },
+      // The public directory (outside the dashboard): find creators to follow.
+      { title: "Creators", href: "/creators", icon: CompassIcon },
     ],
   },
   {
