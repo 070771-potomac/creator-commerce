@@ -38,6 +38,8 @@ export type PublicProduct = {
   price: string;
   creatorHandle: string;
   coverUrl: string | null; // public cover image (S8)
+  seoTitle: string | null; // search-result overrides (S13)
+  seoDescription: string | null;
 };
 
 // Only the public profile columns are selected — never the email.
@@ -120,5 +122,7 @@ export async function getPublicProduct(
     price: formatCents(product.priceCents, product.currency),
     creatorHandle: creator.handle,
     coverUrl: product.coverUrl,
+    seoTitle: product.seoTitle,
+    seoDescription: product.seoDescription,
   };
 }

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -5,6 +6,26 @@ import { ProductCard } from "@/components/product-card";
 import { SiteHeader } from "@/components/site-header";
 import { parseHandleSegment } from "@/lib/handle";
 import { getStorefront } from "@/lib/dal/storefront";
+
+// Storefront metadata (S13): "Maria Ionescu (@maria) · My-E-Commerce".
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ handle: string }>;
+}): Promise<Metadata> {
+  const handle = parseHandleSegment((await params).handle);
+  const creator = handle ? await getStorefront(handle) : null; // cached, shared with the page
+  if (!creator) return { title: "Creator not found", robots: { index: false } };
+
+  const title = `${creator.name} (@${creator.handle})`;
+  const description = (creator.bio || `Digital products by ${creator.name}.`).slice(0, 160);
+  return {
+    title,
+    description,
+    alternates: { canonical: `/@${creator.handle}` },
+    openGraph: { siteName: "My-E-Commerce", type: "profile", title, description, url: `/@${creator.handle}` },
+  };
+}
 
 export default async function StorefrontPage({
   params,

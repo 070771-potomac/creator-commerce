@@ -16,9 +16,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { getProductForEdit } from "@/lib/dal/products";
 
 export default async function EditProductPage({
@@ -76,24 +73,6 @@ export default async function EditProductPage({
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>SEO</CardTitle>
-              <CardDescription>
-                How this page appears in search results. Saved in S13 (Storefront &amp; SEO).
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-4">
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="seoTitle">SEO title</Label>
-                <Input id="seoTitle" defaultValue={product.title} disabled />
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="seoDescription">SEO description</Label>
-                <Textarea id="seoDescription" rows={2} disabled />
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
         <Card>

@@ -82,6 +82,10 @@ export const products = pgTable(
     // URL is stored; the key lets us delete the old file when it's replaced.
     coverKey: text("cover_key"),
     coverUrl: text("cover_url"),
+    // Search-result title and description (S13). null = fall back to the
+    // product title / description on the public page.
+    seoTitle: text("seo_title"),
+    seoDescription: text("seo_description"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },

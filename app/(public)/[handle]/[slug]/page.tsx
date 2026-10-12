@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -18,15 +19,54 @@ const perks = [
   "Lifetime access from your library",
 ];
 
+type Params = Promise<{ handle: string; slug: string }>;
+
+// The same cached DAL call as the page below: Next.js runs both in one
+// render, and "use cache" means the database is asked only once.
+async function loadProduct(params: Params) {
+  const { handle: segment, slug } = await params;
+  const handle = parseHandleSegment(segment);
+  return handle ? getPublicProduct(handle, slug) : null;
+}
+
+// <title>, <meta description>, canonical link and Open Graph tags (S13).
+// The SEO fields from the edit page win; otherwise title / description.
+export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  const product = await loadProduct(params);
+  // Missing, Draft or someone else's slug: a 404 that search engines skip.
+  if (!product) return { title: "Product not found", robots: { index: false } };
+
+  const title = product.seoTitle || product.title;
+  const description = (product.seoDescription || product.description).slice(0, 160) || undefined;
+  const path = `/@${product.creatorHandle}/${product.slug}`;
+
+  return {
+    title,
+    description,
+    // One official address per product, whatever variant was used to reach it.
+    alternates: { canonical: path },
+    // Link previews (WhatsApp, Facebook, LinkedIn…): the cover as the image.
+    // A page's openGraph replaces the layout's (no deep merge), so the
+    // shared fields are repeated here.
+    openGraph: {
+      siteName: "My-E-Commerce",
+      type: "website",
+      title,
+      description,
+      url: path,
+      ...(product.coverUrl ? { images: [{ url: product.coverUrl, alt: product.title }] } : {}),
+    },
+    twitter: { card: product.coverUrl ? "summary_large_image" : "summary", title, description },
+  };
+}
+
 export default async function ProductPage({
   params,
 }: {
-  params: Promise<{ handle: string; slug: string }>;
+  params: Params;
 }) {
-  const { handle: segment, slug } = await params;
-  const handle = parseHandleSegment(segment);
   // null for an unknown creator, a slug of another creator, or a Draft → 404.
-  const product = handle ? await getPublicProduct(handle, slug) : null;
+  const product = await loadProduct(params);
   if (!product) notFound();
 
   return (

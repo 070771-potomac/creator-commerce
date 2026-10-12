@@ -22,6 +22,13 @@
       "when": 1791828572811,
       "tag": "0002_medical_mentallo",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791836502708,
+      "tag": "0003_elite_pyro",
+      "breakpoints": true
     }
   ]
 }

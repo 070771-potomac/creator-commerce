@@ -48,6 +48,8 @@ export type ProductForEdit = {
   // (that is for buyers, S11). null until a file is uploaded.
   file: { name: string; size: string } | null;
   coverUrl: string | null;
+  seoTitle: string; // "" when not set (S13)
+  seoDescription: string;
 };
 
 // /products — the signed-in user's own products, and nobody else's (S12:
@@ -177,6 +179,8 @@ async function productForOwner(
         ? { name: product.fileName, size: formatBytes(product.fileSizeBytes ?? 0) }
         : null,
     coverUrl: product.coverUrl,
+    seoTitle: product.seoTitle ?? "",
+    seoDescription: product.seoDescription ?? "",
   };
 }
 
@@ -235,6 +239,9 @@ export async function updateProduct(input: UpdateProductOutput): Promise<UpdateP
       priceCents: input.price,
       currency: input.currency,
       status: input.status,
+      // Empty → null: the public page then falls back to title / description.
+      seoTitle: input.seoTitle || null,
+      seoDescription: input.seoDescription || null,
       updatedAt: new Date(),
     })
     .where(and(eq(products.id, input.id), eq(products.ownerId, user.id)))

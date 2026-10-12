@@ -88,11 +88,22 @@ export const createProductSchema = z
 
 const statusField = z.enum(["Draft", "Published"], "Choose Draft or Published.");
 
+// Search-result snippet (S13). Optional: empty means "use the product's own
+// title / description". The limits are what Google typically shows before
+// cutting the text off with "…".
+export const SEO_TITLE_MAX = 60;
+export const SEO_DESCRIPTION_MAX = 160;
+
 export const updateProductSchema = z
   .object({
     id: z.uuid("Invalid product."),
     ...baseFields,
     status: statusField,
+    seoTitle: z.string().trim().max(SEO_TITLE_MAX, `Keep the SEO title under ${SEO_TITLE_MAX} characters.`),
+    seoDescription: z
+      .string()
+      .trim()
+      .max(SEO_DESCRIPTION_MAX, `Keep the SEO description under ${SEO_DESCRIPTION_MAX} characters.`),
   })
   .superRefine(checkPriceForCurrency);
 
