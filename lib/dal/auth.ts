@@ -1,11 +1,13 @@
 import "server-only";
 import { eq } from "drizzle-orm";
 import { cacheTag } from "next/cache";
-import { connection } from "next/server";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { cache } from "react";
 
 import { db } from "@/db";
 import { users } from "@/db/schema";
+import { auth } from "@/lib/auth";
 import { tags } from "@/lib/dal/tags";
 
 export type CurrentUser = {
@@ -15,27 +17,25 @@ export type CurrentUser = {
   email: string;
 };
 
-// Temporary until Better Auth (S6): the signed-in user is always the seeded
-// creator "user-1". In S6 this reads the session cookie instead and
-// redirects to /login when there is none.
-const TEMPORARY_USER_ID = "user-1";
-
-// cache() runs the lookup once per request, shared by every DAL function that calls it.
+// The real security check for every dashboard page and every DAL function
+// (Next.js auth guide: "Creating a Data Access Layer"). No valid session →
+// the user is sent to /login and no data is ever read.
+// cache() runs it once per request, shared by every DAL function that calls it.
 export const requireUser = cache(async (): Promise<CurrentUser> => {
-  // Who is asking is decided per request, never cached. connection() marks
-  // this as request-time work (Next.js docs: functions/connection); in S6,
-  // reading cookies() does the same.
-  await connection();
+  // Better Auth reads the session cookie from the request headers, checks its
+  // signature and looks the session up in the `session` table (expiry, logout).
+  // headers() is request data, so pages using this render per request.
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) redirect("/login");
 
-  const user = await userById(TEMPORARY_USER_ID);
-  if (!user) {
-    throw new Error(`User ${TEMPORARY_USER_ID} not found. Run "npm run db:seed".`);
-  }
+  const user = await userById(session.user.id);
+  // Session for a user that was deleted meanwhile → treat as logged out.
+  if (!user) redirect("/login");
   return user;
 });
 
 // Cached per user id. A "use cache" function can't read the request
-// (cookies, connection), so the identity is decided above and passed in.
+// (cookies, headers), so the identity is decided above and passed in.
 async function userById(userId: string): Promise<CurrentUser | null> {
   "use cache";
   cacheTag(tags.user(userId));

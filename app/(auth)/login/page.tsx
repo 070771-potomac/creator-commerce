@@ -1,17 +1,14 @@
+import { Suspense } from "react";
+
+import { LoginForm } from "@/components/auth/login-form";
+import { CenteredCardShell } from "@/components/centered-card-shell";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import Link from "next/link";
-
-import { CenteredCardShell } from "@/components/centered-card-shell";
 
 export default function LoginPage() {
   return (
@@ -22,50 +19,12 @@ export default function LoginPage() {
           <CardDescription>Sign in to your account to continue.</CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="flex flex-col gap-4">
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                autoComplete="email"
-                required
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
-                <Link
-                  href="/forgot-password"
-                  className="text-xs text-muted-foreground underline-offset-4 hover:underline"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-              <Input
-                id="password"
-                type="password"
-                autoComplete="current-password"
-                required
-              />
-            </div>
-            <Button type="submit" className="mt-2 w-full">
-              Sign in
-            </Button>
-          </form>
+          {/* The form reads ?next= from the URL (request data), so with
+              Cache Components it renders inside <Suspense>. */}
+          <Suspense>
+            <LoginForm />
+          </Suspense>
         </CardContent>
-        <CardFooter className="justify-center">
-          <p className="text-sm text-muted-foreground">
-            Don&apos;t have an account?{" "}
-            <Link
-              href="/signup"
-              className="font-medium text-foreground underline-offset-4 hover:underline"
-            >
-              Sign up
-            </Link>
-          </p>
-        </CardFooter>
       </Card>
     </CenteredCardShell>
   );

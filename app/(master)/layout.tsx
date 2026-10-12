@@ -34,8 +34,10 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Suspense } from "react";
+
+import { signOut } from "@/lib/auth-client";
 
 // Sidebar sections from docs/site-tree.md (Dashboard layout).
 const navGroups = [
@@ -105,6 +107,17 @@ export default function MasterLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const router = useRouter();
+
+  // Ends the session: Better Auth deletes the row in the `session` table and
+  // clears the cookie, then we go to /login. replace() so Back doesn't
+  // return to a dashboard page; refresh() drops the logged-in render.
+  async function logOut() {
+    await signOut();
+    router.replace("/login");
+    router.refresh();
+  }
+
   return (
     <SidebarProvider>
       <Sidebar>
@@ -136,8 +149,10 @@ export default function MasterLayout({
                       </NavigationMenuLink>
                     </li>
                     <li>
-                      {/* Placeholder until Better Auth adds a real sign-out (S6). */}
-                      <NavigationMenuLink render={<Link href="/login" />}>
+                      <NavigationMenuLink
+                        render={<button type="button" className="w-full text-left" />}
+                        onClick={logOut}
+                      >
                         Log out
                       </NavigationMenuLink>
                     </li>

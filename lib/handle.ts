@@ -5,3 +5,17 @@ export function parseHandleSegment(segment: string): string | null {
   const decoded = decodeURIComponent(segment);
   return decoded.startsWith("@") ? decoded.slice(1) : null;
 }
+
+// Handle rules, shared by the signup form (browser) and Better Auth (server),
+// so both validate the same way: 3–30 characters, lowercase letters, digits
+// and underscores (e.g. "alexpopovici", "dj_ana").
+export const HANDLE_PATTERN = /^[a-z0-9_]{3,30}$/;
+
+// "  @Alex_Pop " → "alex_pop"
+export function normalizeHandle(input: string): string {
+  return input.trim().replace(/^@/, "").toLowerCase();
+}
+
+export function isValidHandle(handle: string): boolean {
+  return HANDLE_PATTERN.test(handle);
+}

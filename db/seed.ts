@@ -3,11 +3,16 @@
 //
 // It EMPTIES the tables first, then inserts everything, so it can be run
 // again at any time and always produces the same data.
+//
+// Every seeded user also gets an email + password login (Better Auth
+// "credential" account) with the test password SEED_PASSWORD from .env.local,
+// so you can sign in as any of them, e.g. alexandru.popovici0707@gmail.com.
 
 import { randomUUID } from "node:crypto";
 
 import { loadEnvConfig } from "@next/env";
 import { neon } from "@neondatabase/serverless";
+import { hashPassword } from "better-auth/crypto";
 import { drizzle } from "drizzle-orm/neon-http";
 
 import {
@@ -30,6 +35,10 @@ if (process.env.NODE_ENV === "production") {
 if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL is missing. Add it to .env.local.");
 }
+if (!process.env.SEED_PASSWORD) {
+  throw new Error("SEED_PASSWORD is missing. Add a test password to .env.local.");
+}
+const seedPassword = process.env.SEED_PASSWORD;
 
 const db = drizzle({ client: neon(process.env.DATABASE_URL), schema });
 
@@ -102,15 +111,32 @@ async function main() {
     followingId: f.followingId,
   }));
 
+  // Login accounts, shaped exactly like the ones Better Auth creates on
+  // sign-up: providerId "credential", accountId = the user's id, and the
+  // password stored as a HASH made by Better Auth's own hashPassword, so
+  // signing in verifies it. One hash is reused: same password for everyone.
+  const passwordHash = await hashPassword(seedPassword);
+  const accounts = users.map((u) => ({
+    id: randomUUID(),
+    userId: u.id,
+    accountId: u.id,
+    providerId: "credential",
+    password: passwordHash,
+  }));
+
   // One batch = one transaction: if any statement fails, nothing changes.
   // Delete children before parents (foreign keys), insert parents first.
   await db.batch([
+    // Logins first: sessions and accounts point at users.
+    db.delete(schema.sessions),
+    db.delete(schema.accounts),
     db.delete(schema.wishlistItems),
     db.delete(schema.follows),
     db.delete(schema.purchases),
     db.delete(schema.products),
     db.delete(schema.users),
     db.insert(schema.users).values(users),
+    db.insert(schema.accounts).values(accounts),
     db.insert(schema.products).values(products),
     db.insert(schema.purchases).values(purchases),
     db.insert(schema.wishlistItems).values(wishlist),
@@ -119,7 +145,8 @@ async function main() {
 
   console.log(
     `Seeded: ${users.length} users, ${products.length} products, ` +
-      `${purchases.length} purchases, ${wishlist.length} wishlist items, ${follows.length} follows.`,
+      `${purchases.length} purchases, ${wishlist.length} wishlist items, ${follows.length} follows, ` +
+      `${accounts.length} login accounts (password: SEED_PASSWORD from .env.local).`,
   );
 }
 

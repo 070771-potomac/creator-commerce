@@ -7,6 +7,7 @@
 
 import { sql } from "drizzle-orm";
 import {
+  boolean,
   check,
   index,
   integer,
@@ -24,7 +25,10 @@ export const productStatus = pgEnum("product_status", ["Draft", "Published"]);
 export const purchaseStatus = pgEnum("purchase_status", ["Pending", "Paid", "Refunded"]);
 
 // ── users ────────────────────────────────────────────────────────────────
-// Text id (not uuid) because Better Auth (S6) creates user ids as text.
+// Also Better Auth's "user" model (see lib/auth.ts). Text id because Better
+// Auth creates user ids as text. name, email, emailVerified, image,
+// createdAt and updatedAt are the fields Better Auth requires; handle and
+// bio are our own extra fields (Better Auth "additionalFields").
 export const users = pgTable(
   "users",
   {
@@ -34,7 +38,14 @@ export const users = pgTable(
     handle: text("handle").notNull(),
     bio: text("bio").notNull().default(""),
     email: text("email").notNull(),
+    // Set to true once the user confirms their email (not required in S6).
+    emailVerified: boolean("email_verified").notNull().default(false),
+    image: text("image"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
   },
   (t) => [
     uniqueIndex("users_handle_unique").on(t.handle),
@@ -148,4 +159,75 @@ export const follows = pgTable(
     primaryKey({ columns: [t.followerId, t.followingId] }),
     check("follows_not_self", sql`${t.followerId} <> ${t.followingId}`),
   ],
+);
+
+// ── authentication (Better Auth) ─────────────────────────────────────────
+// Managed by Better Auth through the Drizzle adapter (lib/auth.ts). Our code
+// never writes these tables directly — except db/seed.ts for test accounts.
+
+// One row per logged-in browser. The browser holds a signed cookie with the
+// token; deleting the row (logout, expiry) ends that login.
+export const sessions = pgTable(
+  "session",
+  {
+    id: text("id").primaryKey(),
+    token: text("token").notNull(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    ipAddress: text("ip_address"),
+    userAgent: text("user_agent"),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+  },
+  (t) => [uniqueIndex("session_token_unique").on(t.token), index("session_user_idx").on(t.userId)],
+);
+
+// How a user logs in. For email + password: providerId "credential" and
+// `password` holds the password HASH (never the password itself).
+// Social logins (GitHub, Google…) would add rows with their tokens.
+export const accounts = pgTable(
+  "account",
+  {
+    id: text("id").primaryKey(),
+    accountId: text("account_id").notNull(),
+    providerId: text("provider_id").notNull(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    accessToken: text("access_token"),
+    refreshToken: text("refresh_token"),
+    idToken: text("id_token"),
+    accessTokenExpiresAt: timestamp("access_token_expires_at", { withTimezone: true }),
+    refreshTokenExpiresAt: timestamp("refresh_token_expires_at", { withTimezone: true }),
+    scope: text("scope"),
+    password: text("password"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+  },
+  (t) => [index("account_user_idx").on(t.userId)],
+);
+
+// Short-lived codes: email verification, password reset links.
+export const verifications = pgTable(
+  "verification",
+  {
+    id: text("id").primaryKey(),
+    identifier: text("identifier").notNull(),
+    value: text("value").notNull(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+  },
+  (t) => [index("verification_identifier_idx").on(t.identifier)],
 );
