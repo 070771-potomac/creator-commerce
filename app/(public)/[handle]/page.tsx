@@ -73,6 +73,7 @@ export default async function StorefrontPage({
               title={product.title}
               price={product.price}
               type={product.type}
+              coverUrl={product.coverUrl}
               href={`/@${creator.handle}/${product.slug}`}
             />
           ))}

@@ -15,6 +15,7 @@ export type WishlistCard = {
   price: string;
   type: string;
   href: string;
+  coverUrl: string | null;
 };
 
 // /wishlist — only the signed-in user's saved products (filtered by user_id).
@@ -44,6 +45,7 @@ async function wishlistOf(userId: string): Promise<WishlistCard[]> {
       currency: products.currency,
       ownerId: products.ownerId,
       ownerHandle: users.handle,
+      coverUrl: products.coverUrl,
     })
     .from(wishlistItems)
     .innerJoin(products, eq(products.id, wishlistItems.productId))
@@ -64,5 +66,6 @@ async function wishlistOf(userId: string): Promise<WishlistCard[]> {
       price: formatCents(row.priceCents, row.currency),
       type: row.type,
       href: `/@${row.ownerHandle}/${row.slug}`,
+      coverUrl: row.coverUrl,
     }));
 }

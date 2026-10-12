@@ -20,6 +20,7 @@ export type StorefrontProduct = {
   slug: string;
   type: string;
   price: string;
+  coverUrl: string | null; // shown on the storefront card (S8 upload)
 };
 
 export type Storefront = {
@@ -69,6 +70,7 @@ export async function getStorefront(handle: string): Promise<Storefront | null> 
       type: products.type,
       priceCents: products.priceCents,
       currency: products.currency,
+      coverUrl: products.coverUrl,
     })
     .from(products)
     .where(and(eq(products.ownerId, creator.id), eq(products.status, "Published")))
@@ -83,6 +85,7 @@ export async function getStorefront(handle: string): Promise<Storefront | null> 
       slug: row.slug,
       type: row.type,
       price: formatCents(row.priceCents, row.currency),
+      coverUrl: row.coverUrl,
     })),
   };
 }

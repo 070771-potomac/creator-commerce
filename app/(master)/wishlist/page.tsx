@@ -24,6 +24,7 @@ export default async function WishlistPage() {
             description={item.creatorHandle}
             price={item.price}
             type={item.type}
+            coverUrl={item.coverUrl}
             href={item.href}
           />
         ))}
