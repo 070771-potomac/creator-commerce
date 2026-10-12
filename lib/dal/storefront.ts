@@ -1,6 +1,6 @@
 import "server-only";
-import { and, asc, eq } from "drizzle-orm";
-import { cacheTag } from "next/cache";
+import { and, asc, desc, eq, sql } from "drizzle-orm";
+import { cacheLife, cacheTag } from "next/cache";
 
 import { db } from "@/db";
 import { products, users } from "@/db/schema";
@@ -128,4 +128,50 @@ export async function getPublicProduct(
     seoTitle: product.seoTitle,
     seoDescription: product.seoDescription,
   };
+}
+
+// ── home page ────────────────────────────────────────────────────────────
+
+export type FeaturedProduct = {
+  title: string;
+  price: string;
+  type: string;
+  coverUrl: string | null;
+  href: string; // /@handle/slug
+};
+
+// "Featured" products next to the home page hero: real Published products,
+// those with a cover first (they show best), then the most recently updated.
+// Cached; each shown creator's tags refresh it, and it also renews itself
+// every few minutes so newly published products get their turn.
+export async function getFeaturedProducts(limit = 2): Promise<FeaturedProduct[]> {
+  "use cache";
+  cacheLife("minutes");
+
+  const rows = await db
+    .select({
+      ownerId: products.ownerId,
+      title: products.title,
+      slug: products.slug,
+      type: products.type,
+      priceCents: products.priceCents,
+      currency: products.currency,
+      coverUrl: products.coverUrl,
+      handle: users.handle,
+    })
+    .from(products)
+    .innerJoin(users, eq(users.id, products.ownerId))
+    .where(eq(products.status, "Published"))
+    .orderBy(sql`${products.coverUrl} is null`, desc(products.updatedAt))
+    .limit(limit);
+
+  for (const row of rows) cacheTag(tags.products(row.ownerId), tags.user(row.ownerId));
+
+  return rows.map((row) => ({
+    title: row.title,
+    price: formatCents(row.priceCents, row.currency),
+    type: row.type,
+    coverUrl: row.coverUrl,
+    href: `/@${row.handle}/${row.slug}`,
+  }));
 }

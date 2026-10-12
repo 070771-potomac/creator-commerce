@@ -9,6 +9,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/product-card";
+import { getFeaturedProducts } from "@/lib/dal/storefront";
 import { SiteHeader } from "@/components/site-header";
 import {
   Card,
@@ -16,11 +17,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-const sampleProducts = [
-  { title: "UI Kit Pro", price: "$24", type: "ZIP" },
-  { title: "Photo Pack", price: "$12", type: "ZIP" },
-];
 
 const steps = [
   {
@@ -63,7 +59,10 @@ const features = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+  // Cached public data: the page can still be prerendered.
+  const featured = await getFeaturedProducts();
+
   return (
     <div className="flex min-h-full flex-col">
       <SiteHeader />
@@ -97,11 +96,14 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            {sampleProducts.map((product) => (
-              <ProductCard key={product.title} {...product} />
-            ))}
-          </div>
+          {/* Real Published products (cover first), linking to their pages. */}
+          {featured.length > 0 ? (
+            <div className="grid grid-cols-2 gap-4">
+              {featured.map((product) => (
+                <ProductCard key={product.href} {...product} />
+              ))}
+            </div>
+          ) : null}
         </section>
 
         <section id="how" className="bg-muted">
