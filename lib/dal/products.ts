@@ -1,12 +1,13 @@
 import "server-only";
 import { and, asc, eq, sql } from "drizzle-orm";
-import { cacheTag } from "next/cache";
+import { cacheTag, updateTag } from "next/cache";
 
 import { db } from "@/db";
 import { products, purchases } from "@/db/schema";
 import { requireUser } from "@/lib/dal/auth";
 import { formatCents, isUuid } from "@/lib/dal/format";
 import { tags } from "@/lib/dal/tags";
+import type { CreateProductOutput } from "@/lib/validations/product";
 
 // DTOs (Data Transfer Objects): only the fields a page needs, never the whole
 // row. Adding a column to the database later won't leak it to a page.
@@ -108,4 +109,44 @@ async function productForOwner(
     status: product.status,
     publicUrl: `/@${ownerHandle}/${product.slug}`,
   };
+}
+
+// ── writes ───────────────────────────────────────────────────────────────
+// Called only from Server Actions (app/(master)/products/actions.ts), after
+// zod has validated the input. Like the reads, each write decides the owner
+// itself with requireUser(): no caller can create or edit products for
+// someone else.
+
+export type CreateProductResult = { ok: true; id: string } | { ok: false; error: "slug-taken" };
+
+export async function createProduct(input: CreateProductOutput): Promise<CreateProductResult> {
+  const user = await requireUser();
+
+  // Friendly check first; the unique index (owner_id, slug) in the database
+  // still guarantees it if two saves race each other.
+  const [existing] = await db
+    .select({ id: products.id })
+    .from(products)
+    .where(and(eq(products.ownerId, user.id), eq(products.slug, input.slug)))
+    .limit(1);
+  if (existing) return { ok: false, error: "slug-taken" };
+
+  const [created] = await db
+    .insert(products)
+    .values({
+      ownerId: user.id, // from the session, never from the form
+      title: input.title,
+      slug: input.slug,
+      description: input.description,
+      priceCents: input.price,
+      currency: input.currency,
+      type: "PDF", // placeholder until the file upload sets it (S8)
+      status: "Draft", // new products are never public until published
+    })
+    .returning({ id: products.id });
+
+  // Read-your-own-writes: the creator's product list, dashboard and
+  // storefront show the new product on the very next render.
+  updateTag(tags.products(user.id));
+  return { ok: true, id: created.id };
 }
