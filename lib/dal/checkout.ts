@@ -1,10 +1,11 @@
 import "server-only";
-import { and, eq } from "drizzle-orm";
+import { and, eq, gt, sql } from "drizzle-orm";
 
 import { db } from "@/db";
 import { products, purchases, users } from "@/db/schema";
 import { getCurrentUser } from "@/lib/dal/auth";
 import { formatCents } from "@/lib/dal/format";
+import { REPURCHASE_WINDOW_HOURS } from "@/lib/dal/record-purchase";
 import { siteUrl, stripe } from "@/lib/stripe";
 
 // Starting a purchase (S9). Everything the payment depends on — price,
@@ -13,7 +14,7 @@ import { siteUrl, stripe } from "@/lib/stripe";
 
 export type StartCheckoutResult =
   | { kind: "login"; next: string } // not signed in → log in, then come back
-  | { kind: "owned" } // already bought → go to Downloads
+  | { kind: "owned" } // bought in the last 24 h → go to Downloads
   | { kind: "error"; message: string }
   | { kind: "checkout"; url: string }; // Stripe's payment page
 
@@ -49,7 +50,10 @@ export async function startCheckout(productId: string): Promise<StartCheckoutRes
     return { kind: "error", message: "This is your own product." };
   }
 
-  const [owned] = await db
+  // One purchase of a product per buyer per 24 h (S10 rule): within the
+  // window, Buy leads to Downloads instead of a new payment. The webhook
+  // refunds any duplicate that still gets through (two tabs paid at once).
+  const [recent] = await db
     .select({ id: purchases.id })
     .from(purchases)
     .where(
@@ -57,10 +61,11 @@ export async function startCheckout(productId: string): Promise<StartCheckoutRes
         eq(purchases.buyerId, buyer.id),
         eq(purchases.productId, product.id),
         eq(purchases.status, "Paid"),
+        gt(purchases.createdAt, sql`now() - make_interval(hours => ${REPURCHASE_WINDOW_HOURS})`),
       ),
     )
     .limit(1);
-  if (owned) return { kind: "owned" };
+  if (recent) return { kind: "owned" };
 
   // Who bought what from whom. The webhook (S10) reads this back to record
   // the purchase — it is the only link between Stripe's payment and our data.
