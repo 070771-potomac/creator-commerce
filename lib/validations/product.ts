@@ -86,11 +86,13 @@ export const createProductSchema = z
 // The slug is not editable after creation: changing it would break links
 // that were already shared. The status can change (Draft ↔ Published).
 
+const statusField = z.enum(["Draft", "Published"], "Choose Draft or Published.");
+
 export const updateProductSchema = z
   .object({
     id: z.uuid("Invalid product."),
     ...baseFields,
-    status: z.enum(["Draft", "Published"], "Choose Draft or Published."),
+    status: statusField,
   })
   .superRefine(checkPriceForCurrency);
 
@@ -101,6 +103,13 @@ export type CreateProductInput = z.input<typeof createProductSchema>;
 export type CreateProductOutput = z.output<typeof createProductSchema>;
 export type UpdateProductInput = z.input<typeof updateProductSchema>;
 export type UpdateProductOutput = z.output<typeof updateProductSchema>;
+
+// The one-click Published switch in the products list (optimistic UI).
+export const setProductStatusSchema = z.object({
+  id: z.uuid("Invalid product."),
+  status: statusField,
+});
+export type SetProductStatusInput = z.input<typeof setProductStatusSchema>;
 
 // "My UI Kit — v2!" → "my-ui-kit-v2". Used by the form to suggest a slug.
 export function slugify(text: string): string {

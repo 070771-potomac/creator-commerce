@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { PlusIcon } from "@phosphor-icons/react/ssr";
 
-import { Badge } from "@/components/ui/badge";
+import { ProductStatusToggle } from "@/components/products/product-status-toggle";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -52,11 +52,13 @@ export default async function ProductsPage() {
                 <TableRow key={product.id}>
                   <TableCell className="font-medium">{product.title}</TableCell>
                   <TableCell>
-                    <Badge
-                      variant={product.status === "Published" ? "default" : "secondary"}
-                    >
-                      {product.status}
-                    </Badge>
+                    {/* Client island: flips instantly (optimistic), saves in
+                        the background, rolls back if the save fails. */}
+                    <ProductStatusToggle
+                      id={product.id}
+                      title={product.title}
+                      status={product.status}
+                    />
                   </TableCell>
                   <TableCell className="text-right tabular-nums">
                     {product.price}

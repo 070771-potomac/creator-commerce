@@ -7,7 +7,12 @@ import { products, purchases } from "@/db/schema";
 import { requireUser } from "@/lib/dal/auth";
 import { formatCents, isUuid } from "@/lib/dal/format";
 import { tags } from "@/lib/dal/tags";
-import type { CreateProductOutput, Currency, UpdateProductOutput } from "@/lib/validations/product";
+import type {
+  CreateProductOutput,
+  Currency,
+  SetProductStatusInput,
+  UpdateProductOutput,
+} from "@/lib/validations/product";
 
 // DTOs (Data Transfer Objects): only the fields a page needs, never the whole
 // row. Adding a column to the database later won't leak it to a page.
@@ -180,6 +185,23 @@ export async function updateProduct(input: UpdateProductOutput): Promise<UpdateP
   if (updated.length === 0) return { ok: false, error: "not-found" };
 
   // The list, dashboard, edit page and public storefront all carry this tag.
+  updateTag(tags.products(user.id));
+  return { ok: true };
+}
+
+// One-click publish / unpublish from the products list. Same owner rule as
+// updateProduct: someone else's id matches 0 rows and nothing changes.
+export async function setProductStatus(input: SetProductStatusInput): Promise<UpdateProductResult> {
+  const user = await requireUser();
+
+  const updated = await db
+    .update(products)
+    .set({ status: input.status, updatedAt: new Date() })
+    .where(and(eq(products.id, input.id), eq(products.ownerId, user.id)))
+    .returning({ id: products.id });
+
+  if (updated.length === 0) return { ok: false, error: "not-found" };
+
   updateTag(tags.products(user.id));
   return { ok: true };
 }
