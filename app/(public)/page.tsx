@@ -87,9 +87,9 @@ export default function Home() {
                 size="lg"
                 variant="outline"
                 nativeButton={false}
-                render={<Link href="/@alexpopovici" />}
+                render={<Link href="/creators" />}
               >
-                See a storefront
+                Browse creators
               </Button>
             </div>
             <p className="text-xs text-muted-foreground">

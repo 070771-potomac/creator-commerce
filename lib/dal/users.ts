@@ -1,10 +1,10 @@
 import "server-only";
 import { and, asc, eq, sql } from "drizzle-orm";
-import { cacheTag } from "next/cache";
+import { cacheTag, updateTag } from "next/cache";
 
 import { db } from "@/db";
 import { follows, products, users } from "@/db/schema";
-import { requireUser } from "@/lib/dal/auth";
+import { getCurrentUser, requireUser } from "@/lib/dal/auth";
 import { tags } from "@/lib/dal/tags";
 
 export type MyProfile = {
@@ -85,4 +85,50 @@ async function followingOf(userId: string): Promise<FollowedCreator[]> {
     bio,
     publishedProducts,
   }));
+}
+
+// ── follow / unfollow (storefront button) ────────────────────────────────
+
+export type FollowState =
+  | { kind: "anonymous" } // not signed in → the button leads to /login
+  | { kind: "self" } // your own storefront → no button
+  | { kind: "member"; following: boolean };
+
+// Per visitor, so NOT cached like the storefront itself: the page shows it
+// inside <Suspense>, read on every request.
+export async function getFollowState(handle: string): Promise<FollowState> {
+  const user = await getCurrentUser();
+  if (!user) return { kind: "anonymous" };
+  if (user.handle === handle) return { kind: "self" };
+
+  const [row] = await db
+    .select({ followerId: follows.followerId })
+    .from(follows)
+    .innerJoin(users, eq(users.id, follows.followingId))
+    .where(and(eq(follows.followerId, user.id), eq(users.handle, handle)))
+    .limit(1);
+  return { kind: "member", following: Boolean(row) };
+}
+
+export type SetFollowResult = { ok: true; following: boolean } | { ok: false; error: "not-found" | "self" };
+
+// Follow (true) or unfollow (false) the creator with this handle. Repeating
+// the same click is harmless: the (follower, following) primary key makes a
+// second follow a no-op, and deleting a missing row deletes nothing.
+export async function setFollow(handle: string, follow: boolean): Promise<SetFollowResult> {
+  const user = await requireUser();
+
+  const [creator] = await db.select({ id: users.id }).from(users).where(eq(users.handle, handle)).limit(1);
+  if (!creator) return { ok: false, error: "not-found" };
+  if (creator.id === user.id) return { ok: false, error: "self" }; // the DB check forbids it too
+
+  if (follow) {
+    await db.insert(follows).values({ followerId: user.id, followingId: creator.id }).onConflictDoNothing();
+  } else {
+    await db.delete(follows).where(and(eq(follows.followerId, user.id), eq(follows.followingId, creator.id)));
+  }
+
+  // The follower's /following list (read-your-own-writes).
+  updateTag(tags.follows(user.id));
+  return { ok: true, following: follow };
 }

@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
+import { PlusIcon } from "@phosphor-icons/react/ssr";
 import { notFound } from "next/navigation";
 
+import { FollowButton } from "@/components/follow-button";
 import { ProductCard } from "@/components/product-card";
+import { Button } from "@/components/ui/button";
 import { SiteHeader } from "@/components/site-header";
 import { parseHandleSegment } from "@/lib/handle";
 import { getStorefront } from "@/lib/dal/storefront";
+import { getFollowState } from "@/lib/dal/users";
 
 // Storefront metadata (S13): "Maria Ionescu (@maria) · My-E-Commerce".
 export async function generateMetadata({
@@ -54,6 +59,13 @@ export default async function StorefrontPage({
             <h1 className="font-heading text-3xl font-medium">{creator.name}</h1>
             <span className="text-sm text-muted-foreground">@{creator.handle}</span>
           </div>
+          {/* Per visitor → read on each request, inside Suspense, while the
+              rest of the storefront stays cached. */}
+          <div className="ml-auto">
+            <Suspense fallback={null}>
+              <FollowControl handle={creator.handle} />
+            </Suspense>
+          </div>
         </div>
         <p className="max-w-xl text-muted-foreground">{creator.bio}</p>
 
@@ -90,4 +102,20 @@ export default async function StorefrontPage({
       </footer>
     </div>
   );
+}
+
+// Follow button for this visitor: a login link when signed out, nothing on
+// your own storefront, Follow / Following otherwise.
+async function FollowControl({ handle }: { handle: string }) {
+  const state = await getFollowState(handle);
+  if (state.kind === "self") return null;
+  if (state.kind === "anonymous") {
+    return (
+      <Button nativeButton={false} render={<Link href={`/login?next=${encodeURIComponent(`/@${handle}`)}`} />}>
+        <PlusIcon />
+        Follow
+      </Button>
+    );
+  }
+  return <FollowButton handle={handle} following={state.following} />;
 }

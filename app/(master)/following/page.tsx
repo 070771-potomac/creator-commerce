@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { FollowButton } from "@/components/follow-button";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -21,9 +22,22 @@ export default async function FollowingPage() {
           Following
         </h1>
         <p className="text-sm text-muted-foreground">
-          Creators you follow. You get an email when they publish.
+          Creators you follow. Find more on the{" "}
+          <Link href="/creators" className="underline underline-offset-4">
+            Creators
+          </Link>{" "}
+          page.
         </p>
       </div>
+
+      {following.length === 0 ? (
+        <p className="py-8 text-center text-sm text-muted-foreground">
+          You don&apos;t follow anyone yet.{" "}
+          <Link href="/creators" className="underline underline-offset-4">
+            Browse creators
+          </Link>
+        </p>
+      ) : null}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {following.map((person) => (
@@ -43,18 +57,22 @@ export default async function FollowingPage() {
               </div>
               <CardDescription className="mt-2 text-sm">{person.bio}</CardDescription>
             </CardHeader>
-            <CardContent className="flex items-center justify-between">
+            <CardContent className="flex flex-wrap items-center justify-between gap-2">
               <span className="text-sm text-muted-foreground">
                 {person.publishedProducts} products
               </span>
-              <Button
-                variant="outline"
-                size="sm"
-                nativeButton={false}
-                render={<Link href={`/@${person.handle}`} />}
-              >
-                View storefront
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  nativeButton={false}
+                  render={<Link href={`/@${person.handle}`} />}
+                >
+                  View storefront
+                </Button>
+                {/* Unfollow here; the card leaves the list once saved. */}
+                <FollowButton handle={person.handle} following size="sm" />
+              </div>
             </CardContent>
           </Card>
         ))}

@@ -9,6 +9,11 @@ export function SiteHeader() {
         <Link href="/" className="font-heading text-base font-medium">
           My-E-Commerce
         </Link>
+        <nav className="flex items-center gap-1">
+          <Button variant="ghost" size="sm" nativeButton={false} render={<Link href="/creators" />}>
+            Creators
+          </Button>
+        </nav>
         <div className="ml-auto flex items-center gap-2">
           <Button variant="ghost" nativeButton={false} render={<Link href="/login" />}>
             Log in
