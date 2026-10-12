@@ -1,24 +1,14 @@
 import "server-only";
+import { and, desc, eq } from "drizzle-orm";
 
+import { db } from "@/db";
+import { products, purchases, purchaseStatus, users } from "@/db/schema";
 import { requireUser } from "@/lib/dal/auth";
-import {
-  products,
-  purchases,
-  users,
-  type Purchase,
-  type PurchaseStatus,
-} from "@/lib/sample-data";
-
-// In S5 these lookups become SQL joins (purchases ⋈ products ⋈ users).
-function productOf(purchase: Purchase) {
-  return products.find((product) => product.id === purchase.productId);
-}
-
-function userById(id: string) {
-  return users.find((user) => user.id === id);
-}
+import { formatBytes, formatCents, formatShortDate, shortId } from "@/lib/dal/format";
 
 // ── DTOs ─────────────────────────────────────────────────────────────────
+
+export type PurchaseStatus = (typeof purchaseStatus.enumValues)[number];
 
 export type PurchaseListItem = {
   id: string;
@@ -38,7 +28,7 @@ export type DownloadItem = {
 
 // Same shape as the Order type of components/sales-table.tsx.
 export type SaleListItem = {
-  id: string;
+  id: string; // short order number shown as #ID
   buyer: string;
   product: string;
   date: string;
@@ -48,18 +38,33 @@ export type SaleListItem = {
 
 // ── buyer side ───────────────────────────────────────────────────────────
 
-// /purchases — orders where the signed-in user is the BUYER.
+// /purchases — orders where the signed-in user is the BUYER, newest first.
+// Joins: purchases → products (title), purchases → users as seller (handle).
 export async function getMyPurchases(): Promise<PurchaseListItem[]> {
   const user = await requireUser();
-  return purchases
-    .filter((purchase) => purchase.buyerId === user.id)
-    .map((purchase) => ({
-      id: purchase.id,
-      product: productOf(purchase)?.title ?? "Deleted product",
-      creatorHandle: `@${userById(purchase.sellerId)?.handle ?? "unknown"}`,
-      date: purchase.date,
-      amount: purchase.amount,
-    }));
+
+  const rows = await db
+    .select({
+      id: purchases.id,
+      product: products.title,
+      sellerHandle: users.handle,
+      createdAt: purchases.createdAt,
+      amountCents: purchases.amountCents,
+      currency: purchases.currency,
+    })
+    .from(purchases)
+    .innerJoin(products, eq(products.id, purchases.productId))
+    .innerJoin(users, eq(users.id, purchases.sellerId))
+    .where(eq(purchases.buyerId, user.id))
+    .orderBy(desc(purchases.createdAt));
+
+  return rows.map((row) => ({
+    id: row.id,
+    product: row.product,
+    creatorHandle: `@${row.sellerHandle}`,
+    date: formatShortDate(row.createdAt),
+    amount: formatCents(row.amountCents, row.currency),
+  }));
 }
 
 // /downloads — files the signed-in user may download: their own purchases,
@@ -67,37 +72,59 @@ export async function getMyPurchases(): Promise<PurchaseListItem[]> {
 // The download link itself is protected again on the server in S11.
 export async function getMyDownloads(): Promise<DownloadItem[]> {
   const user = await requireUser();
-  return purchases
-    .filter((purchase) => purchase.buyerId === user.id && purchase.status === "Paid")
-    .flatMap((purchase) => {
-      const product = productOf(purchase);
-      if (!product) return [];
-      return [
-        {
-          id: purchase.id,
-          product: product.title,
-          file: product.file,
-          type: product.type,
-          size: product.size,
-        },
-      ];
-    });
+
+  const rows = await db
+    .select({
+      id: purchases.id,
+      product: products.title,
+      fileName: products.fileName,
+      type: products.type,
+      fileSizeBytes: products.fileSizeBytes,
+    })
+    .from(purchases)
+    .innerJoin(products, eq(products.id, purchases.productId))
+    .where(and(eq(purchases.buyerId, user.id), eq(purchases.status, "Paid")))
+    .orderBy(desc(purchases.createdAt));
+
+  return rows.map((row) => ({
+    id: row.id,
+    product: row.product,
+    file: row.fileName ?? "—",
+    type: row.type,
+    size: formatBytes(row.fileSizeBytes),
+  }));
 }
 
 // ── seller side ──────────────────────────────────────────────────────────
 
-// /sales — orders where the signed-in user is the SELLER. The buyer's email
-// stays out of the DTO: the seller only sees the name.
+// /sales — orders where the signed-in user is the SELLER, newest first.
+// Joins users as the BUYER, but selects only the name: the buyer's email
+// never leaves the DAL.
 export async function getMySales(): Promise<SaleListItem[]> {
   const user = await requireUser();
-  return purchases
-    .filter((purchase) => purchase.sellerId === user.id)
-    .map((purchase) => ({
-      id: purchase.id,
-      buyer: userById(purchase.buyerId)?.name ?? "Unknown buyer",
-      product: productOf(purchase)?.title ?? "Deleted product",
-      date: purchase.date,
-      status: purchase.status,
-      total: purchase.amount,
-    }));
+
+  const rows = await db
+    .select({
+      id: purchases.id,
+      buyer: users.name,
+      product: products.title,
+      createdAt: purchases.createdAt,
+      status: purchases.status,
+      amountCents: purchases.amountCents,
+      currency: purchases.currency,
+    })
+    .from(purchases)
+    .innerJoin(products, eq(products.id, purchases.productId))
+    .innerJoin(users, eq(users.id, purchases.buyerId))
+    .where(eq(purchases.sellerId, user.id))
+    .orderBy(desc(purchases.createdAt));
+
+  return rows.map((row) => ({
+    id: shortId(row.id),
+    buyer: row.buyer,
+    product: row.product,
+    date: formatShortDate(row.createdAt),
+    status: row.status,
+    total: formatCents(row.amountCents, row.currency),
+  }));
 }

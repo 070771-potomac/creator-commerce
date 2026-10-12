@@ -1,6 +1,9 @@
 import "server-only";
+import { and, asc, eq } from "drizzle-orm";
 
-import { products, users } from "@/lib/sample-data";
+import { db } from "@/db";
+import { products, users } from "@/db/schema";
+import { formatCents } from "@/lib/dal/format";
 
 // Public storefront data (/@handle and /@handle/{slug}).
 // No requireUser() here: anyone may view a storefront, logged in or not.
@@ -30,19 +33,43 @@ export type PublicProduct = {
   creatorHandle: string;
 };
 
+// Only the public profile columns are selected — never the email.
+async function findCreator(handle: string) {
+  const [creator] = await db
+    .select({ id: users.id, name: users.name, handle: users.handle, bio: users.bio })
+    .from(users)
+    .where(eq(users.handle, handle))
+    .limit(1);
+  return creator ?? null;
+}
+
 // Creator profile + their Published products. null → the page shows 404.
-// The creator's email is deliberately left out of the DTO.
 export async function getStorefront(handle: string): Promise<Storefront | null> {
-  const owner = users.find((user) => user.handle === handle);
-  if (!owner) return null;
+  const creator = await findCreator(handle);
+  if (!creator) return null;
+
+  const rows = await db
+    .select({
+      title: products.title,
+      slug: products.slug,
+      type: products.type,
+      priceCents: products.priceCents,
+      currency: products.currency,
+    })
+    .from(products)
+    .where(and(eq(products.ownerId, creator.id), eq(products.status, "Published")))
+    .orderBy(asc(products.title));
 
   return {
-    name: owner.name,
-    handle: owner.handle,
-    bio: owner.bio,
-    products: products
-      .filter((product) => product.ownerId === owner.id && product.status === "Published")
-      .map(({ title, slug, type, price }) => ({ title, slug, type, price })),
+    name: creator.name,
+    handle: creator.handle,
+    bio: creator.bio,
+    products: rows.map((row) => ({
+      title: row.title,
+      slug: row.slug,
+      type: row.type,
+      price: formatCents(row.priceCents, row.currency),
+    })),
   };
 }
 
@@ -52,12 +79,20 @@ export async function getPublicProduct(
   handle: string,
   slug: string,
 ): Promise<PublicProduct | null> {
-  const owner = users.find((user) => user.handle === handle);
-  if (!owner) return null;
+  const creator = await findCreator(handle);
+  if (!creator) return null;
 
-  const product = products.find(
-    (p) => p.ownerId === owner.id && p.slug === slug && p.status === "Published",
-  );
+  const [product] = await db
+    .select()
+    .from(products)
+    .where(
+      and(
+        eq(products.ownerId, creator.id),
+        eq(products.slug, slug),
+        eq(products.status, "Published"),
+      ),
+    )
+    .limit(1);
   if (!product) return null;
 
   return {
@@ -65,7 +100,7 @@ export async function getPublicProduct(
     slug: product.slug,
     description: product.description,
     type: product.type,
-    price: product.price,
-    creatorHandle: owner.handle,
+    price: formatCents(product.priceCents, product.currency),
+    creatorHandle: creator.handle,
   };
 }

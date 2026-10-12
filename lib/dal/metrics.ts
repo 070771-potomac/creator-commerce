@@ -1,10 +1,13 @@
 import "server-only";
+import { and, desc, eq, sql } from "drizzle-orm";
 
+import { db } from "@/db";
+import { products, purchases } from "@/db/schema";
 import { requireUser } from "@/lib/dal/auth";
-import { products, purchases } from "@/lib/sample-data";
+import { formatCents } from "@/lib/dal/format";
 
-// Every number on /dashboard and /sales is computed here from the purchases
-// table — the single source of truth. Nothing is typed by hand on the page.
+// Every number on /dashboard and /sales is computed here by the database
+// from the purchases table — the single source of truth.
 //
 // The README names this getDashboardMetrics(userId). Here the userId comes
 // from requireUser() instead of a parameter, so no caller can ask for
@@ -28,48 +31,66 @@ export type DashboardMetrics = {
   topProducts: TopProduct[]; // up to 5, by revenue
 };
 
-// Amounts are strings like "$24.00" in the sample data. In S5 they are stored
-// as integer cents, so this parsing disappears; summing cents avoids
-// floating-point errors like 0.1 + 0.2 = 0.30000000000000004.
-function toCents(amount: string): number {
-  return Math.round(Number(amount.replace(/[$,]/g, "")) * 100);
-}
-
-function formatCents(cents: number): string {
-  return (cents / 100).toLocaleString("en-US", { style: "currency", currency: "USD" });
-}
+// Postgres returns sums and counts as strings/bigints; mapWith(Number) makes
+// them plain numbers. Amounts are integer cents, so the sums are exact.
+const countWhere = (condition: ReturnType<typeof sql>) =>
+  sql<number>`count(*) filter (where ${condition})`.mapWith(Number);
 
 export async function getDashboardMetrics(): Promise<DashboardMetrics> {
   const user = await requireUser();
+  const isPaid = sql`${purchases.status} = 'Paid'`;
 
-  // Only the signed-in user's side of the purchases table: their sales.
-  const sales = purchases.filter((purchase) => purchase.sellerId === user.id);
-  const paid = sales.filter((sale) => sale.status === "Paid");
-  const revenueCents = paid.reduce((sum, sale) => sum + toCents(sale.amount), 0);
+  // The three queries are independent, so they run in parallel.
+  const [[sales], [catalog], top] = await Promise.all([
+    // 1) Totals over the user's sales (seller side of purchases).
+    db
+      .select({
+        revenueCents: sql<number>`coalesce(sum(${purchases.amountCents}) filter (where ${isPaid}), 0)`.mapWith(Number),
+        paid: countWhere(isPaid),
+        orders: sql<number>`count(*)`.mapWith(Number),
+        pending: countWhere(sql`${purchases.status} = 'Pending'`),
+        refunded: countWhere(sql`${purchases.status} = 'Refunded'`),
+      })
+      .from(purchases)
+      .where(eq(purchases.sellerId, user.id)),
 
-  const myProducts = products.filter((product) => product.ownerId === user.id);
+    // 2) The user's products by status.
+    db
+      .select({
+        published: countWhere(sql`${products.status} = 'Published'`),
+        draft: countWhere(sql`${products.status} = 'Draft'`),
+      })
+      .from(products)
+      .where(eq(products.ownerId, user.id)),
 
-  // Units and revenue per product, from Paid sales only.
-  const topProducts = myProducts
-    .map((product) => {
-      const productSales = paid.filter((sale) => sale.productId === product.id);
-      const cents = productSales.reduce((sum, sale) => sum + toCents(sale.amount), 0);
-      return { title: product.title, units: productSales.length, cents };
-    })
-    .filter((row) => row.units > 0)
-    .sort((a, b) => b.cents - a.cents)
-    .slice(0, 5)
-    .map(({ title, units, cents }) => ({ title, units, revenue: formatCents(cents) }));
+    // 3) Top 5 products by paid revenue.
+    db
+      .select({
+        title: products.title,
+        units: sql<number>`count(*)`.mapWith(Number),
+        cents: sql<number>`sum(${purchases.amountCents})`.mapWith(Number),
+      })
+      .from(purchases)
+      .innerJoin(products, eq(products.id, purchases.productId))
+      .where(and(eq(purchases.sellerId, user.id), eq(purchases.status, "Paid")))
+      .groupBy(products.id, products.title)
+      .orderBy(desc(sql`sum(${purchases.amountCents})`))
+      .limit(5),
+  ]);
 
   return {
-    revenue: formatCents(revenueCents),
-    unitsSold: paid.length,
-    orders: sales.length,
-    pendingOrders: sales.filter((sale) => sale.status === "Pending").length,
-    refundedOrders: sales.filter((sale) => sale.status === "Refunded").length,
-    averageOrder: formatCents(paid.length ? Math.round(revenueCents / paid.length) : 0),
-    publishedProducts: myProducts.filter((product) => product.status === "Published").length,
-    draftProducts: myProducts.filter((product) => product.status === "Draft").length,
-    topProducts,
+    revenue: formatCents(sales.revenueCents),
+    unitsSold: sales.paid,
+    orders: sales.orders,
+    pendingOrders: sales.pending,
+    refundedOrders: sales.refunded,
+    averageOrder: formatCents(sales.paid ? Math.round(sales.revenueCents / sales.paid) : 0),
+    publishedProducts: catalog.published,
+    draftProducts: catalog.draft,
+    topProducts: top.map((row) => ({
+      title: row.title,
+      units: row.units,
+      revenue: formatCents(row.cents),
+    })),
   };
 }
