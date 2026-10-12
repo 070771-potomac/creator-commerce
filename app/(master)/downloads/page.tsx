@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { DownloadSimpleIcon } from "@phosphor-icons/react/ssr";
 
 import { Badge } from "@/components/ui/badge";
@@ -43,6 +44,16 @@ export default async function DownloadsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
+              {downloads.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="py-8 text-center text-muted-foreground">
+                    Nothing here yet — files you buy appear in this list.{" "}
+                    <Link href="/" className="underline underline-offset-4">
+                      Browse creators
+                    </Link>
+                  </TableCell>
+                </TableRow>
+              ) : null}
               {downloads.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">{item.file}</TableCell>
@@ -52,11 +63,21 @@ export default async function DownloadsPage() {
                   </TableCell>
                   <TableCell className="text-right tabular-nums">{item.size}</TableCell>
                   <TableCell className="text-right">
-                    {/* Protected, time-limited download route (S11). */}
-                    <Button size="sm">
-                      <DownloadSimpleIcon />
-                      Download
-                    </Button>
+                    {item.available ? (
+                      // A plain <a>, not <Link>: this is a file from an API
+                      // route, not a page. The route checks the purchase,
+                      // then streams the file (S11).
+                      <Button
+                        size="sm"
+                        nativeButton={false}
+                        render={<a href={`/api/downloads/${item.id}`} download />}
+                      >
+                        <DownloadSimpleIcon />
+                        Download
+                      </Button>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">File not available yet</span>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
@@ -66,7 +87,8 @@ export default async function DownloadsPage() {
       </Card>
 
       <p className="text-sm text-muted-foreground">
-        Download links are time-limited and tied to your account.
+        Downloads are tied to your account: each file is checked against your
+        purchase and sent through this site — there is no public link to share.
       </p>
     </div>
   );

@@ -7,13 +7,13 @@
 //   UploadThing → /api/uploadthing    (onUploadComplete: save to the product)
 import { randomBytes } from "node:crypto";
 import { createUploadthing, UTFiles, type FileRouter } from "uploadthing/next";
-import { UploadThingError, UTApi } from "uploadthing/server";
+import { UploadThingError } from "uploadthing/server";
 import { z } from "zod";
 
 import { attachCoverImage, attachProductFile, authorizeProductUpload } from "@/lib/dal/uploads";
+import { utapi } from "@/lib/utapi";
 
 const f = createUploadthing();
-const utapi = new UTApi(); // reads UPLOADTHING_TOKEN from the environment
 
 // Every upload names the product it belongs to.
 const productInput = z.object({ productId: z.uuid() });

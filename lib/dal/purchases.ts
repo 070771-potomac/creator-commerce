@@ -1,5 +1,5 @@
 import "server-only";
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 import { cacheTag } from "next/cache";
 
 import { db } from "@/db";
@@ -21,11 +21,14 @@ export type PurchaseListItem = {
 };
 
 export type DownloadItem = {
-  id: string;
+  id: string; // the purchase id → /api/downloads/<id> (S11)
   product: string;
   file: string;
   type: string;
   size: string;
+  // false until the seller uploads the file (seed products have none).
+  // Only a yes/no: the file's key stays inside the DAL.
+  available: boolean;
 };
 
 // Same shape as the Order type of components/sales-table.tsx.
@@ -106,6 +109,7 @@ async function downloadsOfBuyer(buyerId: string): Promise<DownloadItem[]> {
       fileName: products.fileName,
       type: products.type,
       fileSizeBytes: products.fileSizeBytes,
+      hasFile: sql<boolean>`${products.fileKey} is not null`,
     })
     .from(purchases)
     .innerJoin(products, eq(products.id, purchases.productId))
@@ -119,6 +123,7 @@ async function downloadsOfBuyer(buyerId: string): Promise<DownloadItem[]> {
     file: row.fileName ?? "—",
     type: row.type,
     size: formatBytes(row.fileSizeBytes),
+    available: row.hasFile,
   }));
 }
 
