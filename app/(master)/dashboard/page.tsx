@@ -25,7 +25,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { getDashboardMetrics } from "@/lib/dal/metrics";
+import { RevenueChart } from "@/components/revenue-chart";
+import { getDashboardMetrics, REVENUE_DAYS } from "@/lib/dal/metrics";
 
 export default async function DashboardPage() {
   // All numbers are computed in the DAL from the user's own sales.
@@ -35,7 +36,7 @@ export default async function DashboardPage() {
     {
       title: "Revenue",
       value: metrics.revenue,
-      detail: `from ${metrics.unitsSold} paid orders`,
+      detail: `from ${metrics.unitsSold} paid orders · per currency`,
       icon: CurrencyDollarIcon,
     },
     {
@@ -96,11 +97,32 @@ export default async function DashboardPage() {
         ))}
       </div>
 
+      {/* Sales analytics (S12): one small chart per currency. */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Revenue</CardTitle>
+          <CardDescription>Paid orders per day, last {REVENUE_DAYS} days (UTC)</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {metrics.dailyRevenue.length === 0 ? (
+            <p className="py-6 text-center text-sm text-muted-foreground">
+              No paid orders in the last {REVENUE_DAYS} days.
+            </p>
+          ) : (
+            <div className={metrics.dailyRevenue.length > 1 ? "grid gap-8 md:grid-cols-2" : "grid"}>
+              {metrics.dailyRevenue.map((series) => (
+                <RevenueChart key={series.currency} series={series} />
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
         <Card>
           <CardHeader>
             <CardTitle>Top products</CardTitle>
-            <CardDescription>By revenue from paid orders</CardDescription>
+            <CardDescription>Top 5 by units sold · revenue in the currency it was paid in</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>

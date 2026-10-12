@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, eq, sql } from "drizzle-orm";
+import { and, asc, eq, ilike, sql } from "drizzle-orm";
 import { cacheTag, updateTag } from "next/cache";
 
 import { db } from "@/db";
@@ -7,6 +7,7 @@ import { products, purchases } from "@/db/schema";
 import { requireUser } from "@/lib/dal/auth";
 import { formatBytes, formatCents, isUuid } from "@/lib/dal/format";
 import { tags } from "@/lib/dal/tags";
+import { utapi } from "@/lib/utapi";
 import type {
   CreateProductOutput,
   Currency,
@@ -49,18 +50,57 @@ export type ProductForEdit = {
   coverUrl: string | null;
 };
 
-// /products — the signed-in user's own products, and nobody else's.
-export async function getMyProducts(): Promise<ProductListItem[]> {
+// /products — the signed-in user's own products, and nobody else's (S12:
+// filtered, searched and paginated in the database, not in the page).
+export const PRODUCTS_PAGE_SIZE = 5;
+
+export type ProductListFilter = {
+  status: ProductStatus | "all";
+  q: string; // search in the title, "" = no search
+  page: number; // 1-based
+};
+
+export type ProductListPage = {
+  items: ProductListItem[];
+  total: number; // products matching the filter (all pages)
+  page: number; // the page actually shown (clamped to 1…pageCount)
+  pageCount: number;
+};
+
+export async function getMyProducts(filter: ProductListFilter): Promise<ProductListPage> {
   const user = await requireUser();
-  return productsOfOwner(user.id);
+  return productsOfOwner(user.id, filter.status, filter.q, filter.page);
 }
 
 // `sales` = Paid purchases of each product, counted by the database in the
 // same query (left join + count … filter), so products with 0 sales still appear.
 // Tagged with sales too: a new purchase changes the counts.
-async function productsOfOwner(ownerId: string): Promise<ProductListItem[]> {
+// Every argument is part of the cache key: each filter / search / page is
+// cached separately, and all of them are refreshed by the same tags.
+async function productsOfOwner(
+  ownerId: string,
+  status: ProductStatus | "all",
+  q: string,
+  page: number,
+): Promise<ProductListPage> {
   "use cache";
   cacheTag(tags.products(ownerId), tags.sales(ownerId));
+
+  const where = and(
+    eq(products.ownerId, ownerId),
+    status === "all" ? undefined : eq(products.status, status),
+    // ilike = case-insensitive LIKE. % and _ typed by the user are escaped,
+    // so "50%" searches for the text "50%", not "50 followed by anything".
+    q ? ilike(products.title, `%${q.replace(/[\\%_]/g, "\\$&")}%`) : undefined,
+  );
+
+  const [{ total }] = await db
+    .select({ total: sql<number>`count(*)`.mapWith(Number) })
+    .from(products)
+    .where(where);
+
+  const pageCount = Math.max(1, Math.ceil(total / PRODUCTS_PAGE_SIZE));
+  const current = Math.min(Math.max(1, page), pageCount); // ?page=99 → last page
 
   const rows = await db
     .select({
@@ -75,17 +115,26 @@ async function productsOfOwner(ownerId: string): Promise<ProductListItem[]> {
     })
     .from(products)
     .leftJoin(purchases, eq(purchases.productId, products.id))
-    .where(eq(products.ownerId, ownerId))
+    .where(where)
     .groupBy(products.id)
-    .orderBy(asc(products.title));
+    // id as a tie-breaker: two products with the same title can't swap
+    // places between pages.
+    .orderBy(asc(products.title), asc(products.id))
+    .limit(PRODUCTS_PAGE_SIZE)
+    .offset((current - 1) * PRODUCTS_PAGE_SIZE);
 
-  return rows.map((row) => ({
-    id: row.id,
-    title: row.title,
-    status: row.status,
-    price: formatCents(row.priceCents, row.currency),
-    sales: row.sales,
-  }));
+  return {
+    items: rows.map((row) => ({
+      id: row.id,
+      title: row.title,
+      status: row.status,
+      price: formatCents(row.priceCents, row.currency),
+      sales: row.sales,
+    })),
+    total,
+    page: current,
+    pageCount,
+  };
 }
 
 // /products/[id] — returns null when the id is malformed, the product doesn't
@@ -210,6 +259,93 @@ export async function setProductStatus(input: SetProductStatusInput): Promise<Up
     .returning({ id: products.id });
 
   if (updated.length === 0) return { ok: false, error: "not-found" };
+
+  updateTag(tags.products(user.id));
+  return { ok: true };
+}
+
+export type DuplicateProductResult = { ok: true; id: string } | { ok: false; error: "not-found" };
+
+// "Duplicate" on the edit page (S12): a new Draft with the same details.
+// The file and cover are NOT copied: both products would point at the same
+// UploadThing file, and replacing it on one would delete it for the other.
+export async function duplicateProduct(id: string): Promise<DuplicateProductResult> {
+  const user = await requireUser();
+  if (!isUuid(id)) return { ok: false, error: "not-found" };
+
+  const [source] = await db
+    .select()
+    .from(products)
+    .where(and(eq(products.id, id), eq(products.ownerId, user.id)))
+    .limit(1);
+  if (!source) return { ok: false, error: "not-found" };
+
+  // my-kit → my-kit-copy → my-kit-copy-2 … (the first one still free).
+  const base = `${source.slug.slice(0, 75)}-copy`;
+  const taken = new Set(
+    (
+      await db
+        .select({ slug: products.slug })
+        .from(products)
+        .where(and(eq(products.ownerId, user.id), sql`${products.slug} like ${base + "%"}`))
+    ).map((row) => row.slug),
+  );
+  let slug = base;
+  for (let n = 2; taken.has(slug); n++) slug = `${base}-${n}`;
+
+  const [copy] = await db
+    .insert(products)
+    .values({
+      ownerId: user.id,
+      slug,
+      title: `${source.title.slice(0, 113)} (copy)`, // stays within the 120-char limit
+      description: source.description,
+      type: source.type,
+      priceCents: source.priceCents,
+      currency: source.currency,
+      status: "Draft", // never public until the creator publishes it
+    })
+    .returning({ id: products.id });
+
+  updateTag(tags.products(user.id));
+  return { ok: true, id: copy.id };
+}
+
+export type DeleteProductResult = { ok: true } | { ok: false; error: "not-found" | "has-sales" };
+
+// "Delete" on the edit page (S12). A product with any purchase can't be
+// deleted — order history must survive (the database enforces this too:
+// purchases.productId is onDelete "restrict"). Its UploadThing files are
+// removed after the row, so a failed delete never leaves a product without
+// its file.
+export async function deleteProduct(id: string): Promise<DeleteProductResult> {
+  const user = await requireUser();
+  if (!isUuid(id)) return { ok: false, error: "not-found" };
+
+  const [product] = await db
+    .select({ fileKey: products.fileKey, coverKey: products.coverKey })
+    .from(products)
+    .where(and(eq(products.id, id), eq(products.ownerId, user.id)))
+    .limit(1);
+  if (!product) return { ok: false, error: "not-found" };
+
+  const [{ sold }] = await db
+    .select({ sold: sql<number>`count(*)`.mapWith(Number) })
+    .from(purchases)
+    .where(eq(purchases.productId, id));
+  if (sold > 0) return { ok: false, error: "has-sales" };
+
+  await db.delete(products).where(and(eq(products.id, id), eq(products.ownerId, user.id)));
+
+  const keys = [product.fileKey, product.coverKey].filter((key): key is string => Boolean(key));
+  if (keys.length > 0) {
+    try {
+      await utapi.deleteFiles(keys);
+    } catch (error) {
+      // Cleanup only: the product is already gone, so don't fail the action.
+      console.error("Couldn't delete files of deleted product", id, error);
+    }
+  }
 
   updateTag(tags.products(user.id));
   return { ok: true };

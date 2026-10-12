@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SparkleIcon } from "@phosphor-icons/react/ssr";
 
+import { DeleteButton } from "@/components/products/delete-button";
+import { DuplicateButton } from "@/components/products/duplicate-button";
 import { EditProductForm } from "@/components/products/edit-product-form";
 import { ProductFiles } from "@/components/products/product-files";
 import { Badge } from "@/components/ui/badge";
@@ -37,7 +39,7 @@ export default async function EditProductPage({
           </h1>
           <p className="text-sm text-muted-foreground">{product.title}</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-start gap-2">
           <Badge variant={product.status === "Published" ? "default" : "secondary"}>
             {product.status}
           </Badge>
@@ -50,6 +52,8 @@ export default async function EditProductPage({
               View page
             </Button>
           ) : null}
+          <DuplicateButton productId={product.id} />
+          <DeleteButton productId={product.id} />
         </div>
       </div>
 

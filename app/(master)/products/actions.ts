@@ -4,8 +4,15 @@
 // into an endpoint the browser can call — so each one validates its input
 // (zod schema) and checks the user (authActionClient) before doing anything.
 import { returnValidationErrors } from "next-safe-action";
+import { z } from "zod";
 
-import { createProduct, setProductStatus, updateProduct } from "@/lib/dal/products";
+import {
+  createProduct,
+  deleteProduct,
+  duplicateProduct,
+  setProductStatus,
+  updateProduct,
+} from "@/lib/dal/products";
 import { refreshMyProducts } from "@/lib/dal/uploads";
 import { ActionError, authActionClient } from "@/lib/safe-action";
 import {
@@ -56,3 +63,28 @@ export const setProductStatusAction = authActionClient
 export const refreshAfterUploadAction = authActionClient.action(async () => {
   await refreshMyProducts();
 });
+
+// "Duplicate" on the edit page (S12): returns the copy's id; the browser
+// then opens its edit page.
+export const duplicateProductAction = authActionClient
+  .inputSchema(z.object({ id: z.uuid("Invalid product.") }))
+  .action(async ({ parsedInput }) => {
+    const result = await duplicateProduct(parsedInput.id);
+    if (!result.ok) throw new ActionError("This product no longer exists.");
+    return { id: result.id };
+  });
+
+// "Delete" on the edit page (S12).
+export const deleteProductAction = authActionClient
+  .inputSchema(z.object({ id: z.uuid("Invalid product.") }))
+  .action(async ({ parsedInput }) => {
+    const result = await deleteProduct(parsedInput.id);
+    if (!result.ok) {
+      throw new ActionError(
+        result.error === "has-sales"
+          ? "This product has sales, so it can't be deleted. Switch it to Draft to hide it."
+          : "This product no longer exists.",
+      );
+    }
+    return { deleted: true };
+  });
