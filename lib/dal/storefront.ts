@@ -1,14 +1,19 @@
 import "server-only";
 import { and, asc, eq } from "drizzle-orm";
+import { cacheTag } from "next/cache";
 
 import { db } from "@/db";
 import { products, users } from "@/db/schema";
 import { formatCents } from "@/lib/dal/format";
+import { tags } from "@/lib/dal/tags";
 
 // Public storefront data (/@handle and /@handle/{slug}).
 // No requireUser() here: anyone may view a storefront, logged in or not.
 // The rule that protects creators instead: ONLY Published products are
 // returned — Drafts are invisible to the public, as if they didn't exist.
+//
+// Public data is the same for every visitor, so these functions are cached
+// directly ("use cache" on the exported function), keyed by handle/slug.
 
 export type StorefrontProduct = {
   title: string;
@@ -45,8 +50,13 @@ async function findCreator(handle: string) {
 
 // Creator profile + their Published products. null → the page shows 404.
 export async function getStorefront(handle: string): Promise<Storefront | null> {
+  "use cache";
+  // Tagged by handle first, so even a "no such handle" result can be refreshed.
+  cacheTag(tags.storefront(handle));
+
   const creator = await findCreator(handle);
   if (!creator) return null;
+  cacheTag(tags.user(creator.id), tags.products(creator.id));
 
   const rows = await db
     .select({
@@ -79,8 +89,12 @@ export async function getPublicProduct(
   handle: string,
   slug: string,
 ): Promise<PublicProduct | null> {
+  "use cache";
+  cacheTag(tags.storefront(handle));
+
   const creator = await findCreator(handle);
   if (!creator) return null;
+  cacheTag(tags.user(creator.id), tags.products(creator.id));
 
   const [product] = await db
     .select()

@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Suspense } from "react";
 
 // Sidebar sections from docs/site-tree.md (Dashboard layout).
 const navGroups = [
@@ -67,16 +68,43 @@ const navGroups = [
   },
 ];
 
+// The sidebar links. activePath === null renders them without a highlight.
+function NavGroups({ activePath }: { activePath: string | null }) {
+  // Also highlights the parent link on nested pages, e.g. /products/new → Products.
+  const isActive = (href: string) =>
+    activePath !== null && (activePath === href || activePath.startsWith(`${href}/`));
+
+  return navGroups.map((group, index) => (
+    <SidebarGroup key={group.label ?? index}>
+      {group.label ? <SidebarGroupLabel>{group.label}</SidebarGroupLabel> : null}
+      <SidebarGroupContent>
+        <SidebarMenu>
+          {group.items.map((item) => (
+            <SidebarMenuItem key={item.href}>
+              <SidebarMenuButton isActive={isActive(item.href)} render={<Link href={item.href} />}>
+                <item.icon />
+                <span>{item.title}</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
+  ));
+}
+
+// Reads the current URL. On dynamic routes like /products/[id] the path is
+// request data, so with Cache Components this must render inside <Suspense>
+// (see the usePathname docs).
+function ActiveNavGroups() {
+  return <NavGroups activePath={usePathname()} />;
+}
+
 export default function MasterLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const pathname = usePathname();
-  // Also highlights the parent link on nested pages, e.g. /products/new → Products.
-  const isActive = (href: string) =>
-    pathname === href || pathname.startsWith(`${href}/`);
-
   return (
     <SidebarProvider>
       <Sidebar>
@@ -86,28 +114,10 @@ export default function MasterLayout({
           </Link>
         </SidebarHeader>
         <SidebarContent>
-          {navGroups.map((group, index) => (
-            <SidebarGroup key={group.label ?? index}>
-              {group.label ? (
-                <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
-              ) : null}
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {group.items.map((item) => (
-                    <SidebarMenuItem key={item.href}>
-                      <SidebarMenuButton
-                        isActive={isActive(item.href)}
-                        render={<Link href={item.href} />}
-                      >
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          ))}
+          {/* Fallback: the same links, unhighlighted, until the path is known. */}
+          <Suspense fallback={<NavGroups activePath={null} />}>
+            <ActiveNavGroups />
+          </Suspense>
         </SidebarContent>
       </Sidebar>
 

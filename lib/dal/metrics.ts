@@ -1,10 +1,12 @@
 import "server-only";
 import { and, desc, eq, sql } from "drizzle-orm";
+import { cacheTag } from "next/cache";
 
 import { db } from "@/db";
 import { products, purchases } from "@/db/schema";
 import { requireUser } from "@/lib/dal/auth";
 import { formatCents } from "@/lib/dal/format";
+import { tags } from "@/lib/dal/tags";
 
 // Every number on /dashboard and /sales is computed here by the database
 // from the purchases table — the single source of truth.
@@ -38,6 +40,14 @@ const countWhere = (condition: ReturnType<typeof sql>) =>
 
 export async function getDashboardMetrics(): Promise<DashboardMetrics> {
   const user = await requireUser();
+  return metricsOf(user.id);
+}
+
+// Cached per seller. Refreshed when their sales change (S10 webhook) or
+// their products change (S7 forms).
+async function metricsOf(userId: string): Promise<DashboardMetrics> {
+  "use cache";
+  cacheTag(tags.sales(userId), tags.products(userId));
   const isPaid = sql`${purchases.status} = 'Paid'`;
 
   // The three queries are independent, so they run in parallel.
@@ -52,7 +62,7 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics> {
         refunded: countWhere(sql`${purchases.status} = 'Refunded'`),
       })
       .from(purchases)
-      .where(eq(purchases.sellerId, user.id)),
+      .where(eq(purchases.sellerId, userId)),
 
     // 2) The user's products by status.
     db
@@ -61,7 +71,7 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics> {
         draft: countWhere(sql`${products.status} = 'Draft'`),
       })
       .from(products)
-      .where(eq(products.ownerId, user.id)),
+      .where(eq(products.ownerId, userId)),
 
     // 3) Top 5 products by paid revenue.
     db
@@ -72,7 +82,7 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics> {
       })
       .from(purchases)
       .innerJoin(products, eq(products.id, purchases.productId))
-      .where(and(eq(purchases.sellerId, user.id), eq(purchases.status, "Paid")))
+      .where(and(eq(purchases.sellerId, userId), eq(purchases.status, "Paid")))
       .groupBy(products.id, products.title)
       .orderBy(desc(sql`sum(${purchases.amountCents})`))
       .limit(5),

@@ -186,9 +186,17 @@ export default function Home() {
           </nav>
         </div>
         <div className="mx-auto w-full max-w-5xl px-4 pb-8 text-xs text-muted-foreground">
-          © {new Date().getFullYear()} My-E-Commerce
+          © <CopyrightYear /> My-E-Commerce
         </div>
       </footer>
     </div>
   );
+}
+
+// Cache Components doesn't let a prerendered page read the current time
+// silently (the year would freeze at build time). "use cache" makes it an
+// explicit cached value, recomputed when the cache entry is revalidated.
+async function CopyrightYear() {
+  "use cache";
+  return new Date().getFullYear();
 }

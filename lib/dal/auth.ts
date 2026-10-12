@@ -1,10 +1,12 @@
 import "server-only";
 import { eq } from "drizzle-orm";
+import { cacheTag } from "next/cache";
 import { connection } from "next/server";
 import { cache } from "react";
 
 import { db } from "@/db";
 import { users } from "@/db/schema";
+import { tags } from "@/lib/dal/tags";
 
 export type CurrentUser = {
   id: string;
@@ -20,20 +22,28 @@ const TEMPORARY_USER_ID = "user-1";
 
 // cache() runs the lookup once per request, shared by every DAL function that calls it.
 export const requireUser = cache(async (): Promise<CurrentUser> => {
-  // Data is per user and changes over time, so pages using it must render at
-  // request time, not once at build time. connection() tells Next.js that
-  // (see the Next.js docs: functions/connection). In S6, reading cookies()
-  // has the same effect.
+  // Who is asking is decided per request, never cached. connection() marks
+  // this as request-time work (Next.js docs: functions/connection); in S6,
+  // reading cookies() does the same.
   await connection();
 
-  const [user] = await db
-    .select({ id: users.id, name: users.name, handle: users.handle, email: users.email })
-    .from(users)
-    .where(eq(users.id, TEMPORARY_USER_ID))
-    .limit(1);
-
+  const user = await userById(TEMPORARY_USER_ID);
   if (!user) {
     throw new Error(`User ${TEMPORARY_USER_ID} not found. Run "npm run db:seed".`);
   }
   return user;
 });
+
+// Cached per user id. A "use cache" function can't read the request
+// (cookies, connection), so the identity is decided above and passed in.
+async function userById(userId: string): Promise<CurrentUser | null> {
+  "use cache";
+  cacheTag(tags.user(userId));
+
+  const [user] = await db
+    .select({ id: users.id, name: users.name, handle: users.handle, email: users.email })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+  return user ?? null;
+}
