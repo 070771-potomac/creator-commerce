@@ -1,15 +1,19 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { XIcon } from "@phosphor-icons/react/ssr";
 
 import { CenteredCardShell } from "@/components/centered-card-shell";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { creator, products } from "@/lib/sample-data";
 
-// Stripe cancel URL (S9). The product will come from the checkout session.
-export default function CheckoutCancelPage() {
-  const product = products[0];
-
+// Stripe cancel URL (S9): the buyer left Stripe's payment page without
+// paying. lib/dal/checkout.ts puts the product page in ?product=/@handle/slug
+// so we can offer a way back. Nothing was charged and nothing is recorded.
+export default function CheckoutCancelPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ product?: string | string[] }>;
+}) {
   return (
     <CenteredCardShell>
       <Card className="w-full max-w-sm">
@@ -21,23 +25,48 @@ export default function CheckoutCancelPage() {
           <p className="text-sm text-muted-foreground">
             No charge was made. You can pick up where you left off any time.
           </p>
-          <div className="mt-2 flex flex-wrap justify-center gap-2">
-            <Button
-              nativeButton={false}
-              render={<Link href={`/@${creator.handle}/${product.slug}`} />}
-            >
-              Back to product
-            </Button>
-            <Button
-              variant="outline"
-              nativeButton={false}
-              render={<Link href={`/@${creator.handle}`} />}
-            >
-              Browse storefront
-            </Button>
-          </div>
+          {/* The query string is request data → inside Suspense. */}
+          <Suspense fallback={<BackLinks productPath={null} />}>
+            <BackLinksFromQuery searchParams={searchParams} />
+          </Suspense>
         </CardContent>
       </Card>
     </CenteredCardShell>
+  );
+}
+
+// Only a real product path (/@handle/slug) is turned into a link — never an
+// arbitrary URL from the query string (that would be an open redirect).
+const PRODUCT_PATH = /^\/@[a-z0-9_]{3,30}\/[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+async function BackLinksFromQuery({
+  searchParams,
+}: {
+  searchParams: Promise<{ product?: string | string[] }>;
+}) {
+  const { product } = await searchParams;
+  const productPath = typeof product === "string" && PRODUCT_PATH.test(product) ? product : null;
+  return <BackLinks productPath={productPath} />;
+}
+
+function BackLinks({ productPath }: { productPath: string | null }) {
+  // "/@maria/type-scale-kit" → "/@maria"
+  const storefront = productPath ? productPath.slice(0, productPath.lastIndexOf("/")) : null;
+
+  return (
+    <div className="mt-2 flex flex-wrap justify-center gap-2">
+      {productPath ? (
+        <Button nativeButton={false} render={<Link href={productPath} />}>
+          Back to product
+        </Button>
+      ) : null}
+      <Button
+        variant={productPath ? "outline" : "default"}
+        nativeButton={false}
+        render={<Link href={storefront ?? "/"} />}
+      >
+        {storefront ? "Browse storefront" : "Back to home"}
+      </Button>
+    </div>
   );
 }

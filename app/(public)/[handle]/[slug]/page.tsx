@@ -1,11 +1,9 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  CheckIcon,
-  HeartIcon,
-  LockKeyIcon,
-} from "@phosphor-icons/react/ssr";
+import { CheckIcon, HeartIcon } from "@phosphor-icons/react/ssr";
 
+import { BuyButton } from "@/components/checkout/buy-button";
 import { SiteHeader } from "@/components/site-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -43,10 +41,23 @@ export default async function ProductPage({
             </Link>{" "}
             / {product.slug}
           </p>
-          {/* Placeholder until cover images are uploaded (S8). */}
-          <div className="flex aspect-16/10 items-center justify-center bg-muted text-xs text-muted-foreground">
-            cover
-          </div>
+          {/* Cover uploaded on the edit page (S8); a plain panel until then. */}
+          {product.coverUrl ? (
+            <div className="relative aspect-16/10 overflow-hidden bg-muted">
+              <Image
+                src={product.coverUrl}
+                alt={product.title}
+                fill
+                priority
+                sizes="(min-width: 768px) 560px, 100vw"
+                className="object-cover"
+              />
+            </div>
+          ) : (
+            <div className="flex aspect-16/10 items-center justify-center bg-muted text-xs text-muted-foreground">
+              {product.type}
+            </div>
+          )}
           <div className="flex flex-col gap-2">
             <h1 className="font-heading text-3xl font-medium">{product.title}</h1>
             <p className="text-muted-foreground">{product.description}</p>
@@ -84,11 +95,8 @@ export default async function ProductPage({
                 </span>
                 <Badge>Published</Badge>
               </div>
-              {/* Starts Stripe Checkout in S9; the success page is shown for now. */}
-              <Button size="lg" nativeButton={false} render={<Link href="/checkout/success" />}>
-                <LockKeyIcon />
-                Buy now
-              </Button>
+              {/* Starts Stripe Checkout (S9): the price is read on the server. */}
+              <BuyButton productId={product.id} />
               <Button size="lg" variant="outline">
                 <HeartIcon />
                 Save to wishlist

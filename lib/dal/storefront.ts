@@ -30,12 +30,14 @@ export type Storefront = {
 };
 
 export type PublicProduct = {
+  id: string; // sent by the Buy button (S9); the price is re-read on the server
   title: string;
   slug: string;
   description: string;
   type: string;
   price: string;
   creatorHandle: string;
+  coverUrl: string | null; // public cover image (S8)
 };
 
 // Only the public profile columns are selected — never the email.
@@ -110,11 +112,13 @@ export async function getPublicProduct(
   if (!product) return null;
 
   return {
+    id: product.id,
     title: product.title,
     slug: product.slug,
     description: product.description,
     type: product.type,
     price: formatCents(product.priceCents, product.currency),
     creatorHandle: creator.handle,
+    coverUrl: product.coverUrl,
   };
 }
