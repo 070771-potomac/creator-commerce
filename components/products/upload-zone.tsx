@@ -30,7 +30,7 @@ type UploadZoneProps = {
 // "application/zip" before the upload starts (the file itself is unchanged).
 function normalizeType(file: File): File {
   const zipAliases = ["application/x-zip-compressed", "application/x-zip", ""];
-  if (/.zip$/i.test(file.name) && zipAliases.includes(file.type)) {
+  if (/\.zip$/i.test(file.name) && zipAliases.includes(file.type)) {
     return new File([file], file.name, { type: "application/zip", lastModified: file.lastModified });
   }
   return file;
